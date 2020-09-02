@@ -1,0 +1,3 @@
+version: "1"
+domain: kubeflare.io
+repo: github.com/replicatedhq/kubeflare

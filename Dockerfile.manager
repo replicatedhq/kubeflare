@@ -1,0 +1,15 @@
+# Copy kubeflare into a thin image
+FROM debian:buster
+WORKDIR /
+
+RUN apt-get update \
+ && apt-get -y install \
+    ca-certificates
+
+ADD ./bin/manager /manager
+
+RUN useradd -c 'kubeflare user' -m -d /home/kubeflare -s /bin/bash -u 1001 kubeflare
+USER kubeflare
+ENV HOME /home/kubeflare
+
+ENTRYPOINT ["/manager", "run"]
