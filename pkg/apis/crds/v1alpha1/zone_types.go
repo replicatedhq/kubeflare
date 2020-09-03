@@ -20,8 +20,61 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type DNSRecord struct {
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	Content  string `json:"content"`
+	TTL      *int   `json:"ttl,omitempty"`
+	Priority *int   `json:"priority,omitempty"`
+	Proxied  *bool  `json:"proxied,omitempty"`
+}
+
+type MobileRedirect struct {
+	Status          *bool   `json:"status,omi2tempty"`
+	MobileSubdomain *string `json:"mobileSubdomain,omitempty"`
+	StripURI        *bool   `json:"stripURI,omitempty"`
+}
+
+type MinifySetting struct {
+	CSS  *bool `json:"css,omitempty"`
+	HTML *bool `json:"html,omitempty"`
+	JS   *bool `json:"js,omitempty"`
+}
+
+type ZoneSettings struct {
+	AdvancedDDOS            *bool           `json:"advancedDDOS,omitempty"`
+	AlwaysOnline            *bool           `json:"alwaysOnline,omitempty"`
+	AlwaysUseHTTPS          *bool           `json:"alwaysUseHttps,omitempty"`
+	OpportunisticOnion      *bool           `json:"opportunisticOnion,omitempty"`
+	AutomaticHTTPSRewrites  *bool           `json:"automaticHTTSRewrites,omitempty"`
+	BrowserCacheTTL         *int            `json:"browserCacheTTL,omitempty"`
+	BrowserCheck            *bool           `json:"browserCheck,omitempty"`
+	CacheLevel              *string         `json:"cacheLevel,omitempty"`
+	ChallengeTTL            *int            `json:"challengeTTL,omitempty"`
+	DevelopmentMode         *bool           `json:"developmentMode,omitempty"`
+	EmailObfuscation        *bool           `json:"emailObfuscation,omitempty"`
+	HotlinkProtection       *bool           `json:"hotlinkProtection,omitempty"`
+	IPGeolocation           *bool           `json:"ipGeolocation,omitempty"`
+	IPV6                    *bool           `json:"ipv6,omitempty"`
+	Minify                  *MinifySetting  `json:"minify,omitempty"`
+	MobileRedirect          *MobileRedirect `json:"mobileRedirect,omitempty"`
+	Mirage                  *bool           `json:"mirage,omitempty"`
+	OriginErrorPagePassThru *bool           `json:"originErrorPagePassThru,omitempty"`
+	OpportunisticEncryption *bool           `json:"opportunisticEncryption,omitempty"`
+	Polish                  *bool           `json:"polish,omitempty"`
+	WebP                    *bool           `json:"webp,omitempty"`
+	Brotli                  *bool           `json:"brotli,omitempty"`
+	PrefetchPreload         *bool           `json:"prefetchPreload,omitempty"`
+	PrivacyPass             *bool           `json:"privacyPass,omitempty"`
+	ResponseBuffering       *bool           `json:"responseBuffering,omitempty"`
+	RocketLoader            *bool           `json:"rocketLoader,omitempty"`
+}
+
 // ZoneSpec defines the desired state of Zone
 type ZoneSpec struct {
+	APIToken   string        `json:"apiToken"`
+	Settings   *ZoneSettings `json:"settings,omitempty"`
+	DNSRecords []*DNSRecord  `json:"dnsRecords,omitempty"`
 }
 
 // ZoneStatus defines the observed state of Zone
@@ -33,6 +86,7 @@ type ZoneStatus struct {
 
 // Zone is the Schema for the zones API
 // +k8s:openapi-gen=true
+// +kubebuilder:subresource:status
 type Zone struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

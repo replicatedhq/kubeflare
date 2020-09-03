@@ -1,0 +1,5 @@
+{
+  "status": "on",
+  "mobile_subdomain": "mobile",
+  "strip_uri": true
+}

@@ -15,6 +15,8 @@ spec:
     plural: zones
     singular: zone
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       description: Zone is the Schema for the zones API
@@ -33,6 +35,103 @@ spec:
           type: object
         spec:
           description: ZoneSpec defines the desired state of Zone
+          properties:
+            apiToken:
+              type: string
+            dnsRecords:
+              items:
+                properties:
+                  content:
+                    type: string
+                  name:
+                    type: string
+                  priority:
+                    type: integer
+                  proxied:
+                    type: boolean
+                  ttl:
+                    type: integer
+                  type:
+                    type: string
+                required:
+                - content
+                - name
+                - type
+                type: object
+              type: array
+            settings:
+              properties:
+                advancedDDOS:
+                  type: boolean
+                alwaysOnline:
+                  type: boolean
+                alwaysUseHttps:
+                  type: boolean
+                automaticHTTSRewrites:
+                  type: boolean
+                brotli:
+                  type: boolean
+                browserCacheTTL:
+                  type: integer
+                browserCheck:
+                  type: boolean
+                cacheLevel:
+                  type: string
+                challengeTTL:
+                  type: integer
+                developmentMode:
+                  type: boolean
+                emailObfuscation:
+                  type: boolean
+                hotlinkProtection:
+                  type: boolean
+                ipGeolocation:
+                  type: boolean
+                ipv6:
+                  type: boolean
+                minify:
+                  properties:
+                    css:
+                      type: boolean
+                    html:
+                      type: boolean
+                    js:
+                      type: boolean
+                  type: object
+                mirage:
+                  type: boolean
+                mobileRedirect:
+                  properties:
+                    mobileSubdomain:
+                      type: string
+                    status:
+                      type: boolean
+                    stripURI:
+                      type: boolean
+                  required:
+                  - status
+                  type: object
+                opportunisticEncryption:
+                  type: boolean
+                opportunisticOnion:
+                  type: boolean
+                originErrorPagePassThru:
+                  type: boolean
+                polish:
+                  type: boolean
+                prefetchPreload:
+                  type: boolean
+                privacyPass:
+                  type: boolean
+                responseBuffering:
+                  type: boolean
+                rocketLoader:
+                  type: boolean
+                webp:
+                  type: boolean
+              type: object
+          required:
+          - apiToken
           type: object
         status:
           description: ZoneStatus defines the observed state of Zone

@@ -17,10 +17,12 @@ limitations under the License.
 package zone
 
 import (
+	"context"
 	"time"
 
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
+	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeinformers "k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -91,5 +93,29 @@ type ReconcileZone struct {
 func (r *ReconcileZone) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// This reconcile loop will be called for all Zone objects
 	// because of the informer that we have set up
+	ctx := context.Background()
+	instance := crdsv1alpha1.Zone{}
+	err := r.Get(ctx, request.NamespacedName, &instance)
+	if err != nil {
+		logger.Error(err)
+		return reconcile.Result{}, err
+	}
+
+	cf, err := r.getCloudflareAPI(ctx, instance)
+	if err != nil {
+		logger.Error(err)
+		return reconcile.Result{}, err
+	}
+
+	if err := ReconcileSettings(ctx, instance, cf); err != nil {
+		logger.Error(err)
+		return reconcile.Result{}, err
+	}
+
+	if err := r.reconcileDNSRecords(ctx, instance); err != nil {
+		logger.Error(err)
+		return reconcile.Result{}, err
+	}
+
 	return reconcile.Result{}, nil
 }

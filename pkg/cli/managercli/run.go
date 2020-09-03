@@ -2,7 +2,6 @@ package managercli
 
 import (
 	"os"
-	"strings"
 
 	"github.com/replicatedhq/kubeflare/pkg/apis"
 	zonecontroller "github.com/replicatedhq/kubeflare/pkg/controller/zone"
@@ -33,6 +32,7 @@ func RunCmd() *cobra.Command {
 			v := viper.GetViper()
 
 			if v.GetString("log-level") == "debug" {
+				logger.Info("setting log level to debug")
 				logger.SetDebug()
 			}
 
@@ -83,13 +83,4 @@ func RunCmd() *cobra.Command {
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
 
 	return cmd
-}
-
-func defaultManagerTag() string {
-	tag := version.Version()
-	if strings.HasPrefix(tag, "v") {
-		tag = strings.TrimPrefix(tag, "v")
-	}
-
-	return tag
 }

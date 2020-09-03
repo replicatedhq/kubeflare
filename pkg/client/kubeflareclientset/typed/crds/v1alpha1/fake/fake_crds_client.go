@@ -28,6 +28,10 @@ type FakeCrdsV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeCrdsV1alpha1) APITokens(namespace string) v1alpha1.APITokenInterface {
+	return &FakeAPITokens{c, namespace}
+}
+
 func (c *FakeCrdsV1alpha1) Zones(namespace string) v1alpha1.ZoneInterface {
 	return &FakeZones{c, namespace}
 }

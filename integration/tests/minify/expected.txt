@@ -1,0 +1,5 @@
+{
+  "js": "on",
+  "css": "on",
+  "html": "off"
+}

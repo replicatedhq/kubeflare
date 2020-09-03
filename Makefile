@@ -38,6 +38,17 @@ clean-and-tidy:
 	@go clean -modcache ||:
 	@go mod tidy ||:
 
+.PHONY: integration
+integration: integration-bin
+	make -C integration run
+
+.PHONY: integration-bin
+integration-bin: generate fmt vet manifests
+	go build \
+		${LDFLAGS} \
+		-i \
+		-o bin/integration \
+		./cmd/integration
 
 .PHONY: test
 test: generate fmt vet manifests

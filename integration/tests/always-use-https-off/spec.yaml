@@ -1,0 +1,8 @@
+apiVersion: crds.kubeflare.io/v1alpha1
+kind: Zone
+metadata:
+  name: always-use-https
+spec:
+  apiToken: UNUSED
+  settings:
+    alwaysUseHttps: false

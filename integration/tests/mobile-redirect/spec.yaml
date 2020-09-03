@@ -1,0 +1,11 @@
+apiVersion: crds.kubeflare.io/v1alpha1
+kind: Zone
+metadata:
+  name: always-use-https
+spec:
+  apiToken: UNUSED
+  settings:
+    mobileRedirect:
+      status: true
+      mobileSubdomain: "mobile"
+      stripURI: true
