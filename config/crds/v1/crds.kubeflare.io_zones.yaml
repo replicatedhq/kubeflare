@@ -38,27 +38,6 @@ spec:
             properties:
               apiToken:
                 type: string
-              dnsRecords:
-                items:
-                  properties:
-                    content:
-                      type: string
-                    name:
-                      type: string
-                    priority:
-                      type: integer
-                    proxied:
-                      type: boolean
-                    ttl:
-                      type: integer
-                    type:
-                      type: string
-                  required:
-                  - content
-                  - name
-                  - type
-                  type: object
-                type: array
               settings:
                 properties:
                   advancedDDOS:

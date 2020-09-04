@@ -1,4 +1,4 @@
-package zone
+package dnsrecord
 
 import (
 	"context"
@@ -7,25 +7,27 @@ import (
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
-	"go.uber.org/zap"
 )
 
-func (r *ReconcileZone) reconcileDNSRecords(ctx context.Context, instance crdsv1alpha1.Zone) error {
-	logger.Debug("reconcileDNSRecords for zone", zap.String("zoneName", instance.Name))
+func ReconcileDNSRecords(ctx context.Context, instance crdsv1alpha1.DNSRecord, zone *crdsv1alpha1.Zone, cf *cloudflare.API) error {
+	logger.Debug("reconcileDNSRecords for zone")
 
-	api, err := r.getCloudflareAPI(ctx, instance)
-	if err != nil {
-		return errors.Wrap(err, "failed to get cloudflare api")
-	}
-
-	zoneID, err := api.ZoneIDByName(instance.Name)
+	zoneID, err := cf.ZoneIDByName(zone.Name)
 	if err != nil {
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	existingRecords, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{})
+	existingRecords, err := cf.DNSRecords(zoneID, cloudflare.DNSRecord{})
 	if err != nil {
 		return errors.Wrap(err, "failed to list dns records")
+	}
+
+	desiredRecords := []*crdsv1alpha1.Record{}
+	if instance.Spec.Record != nil {
+		desiredRecords = append(desiredRecords, instance.Spec.Record)
+	}
+	if instance.Spec.Records != nil {
+		desiredRecords = append(desiredRecords, instance.Spec.Records...)
 	}
 
 	recordsToCreate := []cloudflare.DNSRecord{}
@@ -34,7 +36,7 @@ func (r *ReconcileZone) reconcileDNSRecords(ctx context.Context, instance crdsv1
 
 	for _, existingRecord := range existingRecords {
 		found := false
-		for _, desiredRecord := range instance.Spec.DNSRecords {
+		for _, desiredRecord := range desiredRecords {
 			if desiredRecord.Name == existingRecord.Name && desiredRecord.Type == existingRecord.Type {
 				found = true
 				isChanged := false
@@ -75,7 +77,7 @@ func (r *ReconcileZone) reconcileDNSRecords(ctx context.Context, instance crdsv1
 		}
 	}
 
-	for _, desiredRecord := range instance.Spec.DNSRecords {
+	for _, desiredRecord := range desiredRecords {
 		found := false
 		for _, existingRecord := range existingRecords {
 			if existingRecord.Type == desiredRecord.Type && existingRecord.Name == desiredRecord.Name {
@@ -107,7 +109,7 @@ func (r *ReconcileZone) reconcileDNSRecords(ctx context.Context, instance crdsv1
 	}
 
 	for _, recordToCreate := range recordsToCreate {
-		response, err := api.CreateDNSRecord(zoneID, recordToCreate)
+		response, err := cf.CreateDNSRecord(zoneID, recordToCreate)
 		if err != nil {
 			return errors.Wrap(err, "failed to create dns record")
 		}
@@ -126,7 +128,7 @@ func (r *ReconcileZone) reconcileDNSRecords(ctx context.Context, instance crdsv1
 			Proxied: recordToUpdate.Proxied,
 		}
 
-		err := api.UpdateDNSRecord(zoneID, recordToUpdate.ID, rr)
+		err := cf.UpdateDNSRecord(zoneID, recordToUpdate.ID, rr)
 		if err != nil {
 			return errors.Wrap(err, "failed to update dns record")
 		}
