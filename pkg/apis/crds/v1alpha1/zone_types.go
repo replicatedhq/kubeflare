@@ -20,6 +20,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type SecurityHeader struct {
+	Enabled           *bool `json:"enabled,omitempty"`
+	MaxAge            *int  `json:"maxAge,omitempty"`
+	IncludeSubdomains *bool `json:"includeSubdomains,omitempty"`
+	NoSniff           *bool `json:"noSniff,omitempty"`
+}
+
 type MobileRedirect struct {
 	Status          *bool   `json:"status,omi2tempty"`
 	MobileSubdomain *string `json:"mobileSubdomain,omitempty"`
@@ -59,6 +66,24 @@ type ZoneSettings struct {
 	PrivacyPass             *bool           `json:"privacyPass,omitempty"`
 	ResponseBuffering       *bool           `json:"responseBuffering,omitempty"`
 	RocketLoader            *bool           `json:"rocketLoader,omitempty"`
+	SecurityHeader          *SecurityHeader `json:"securityHeader,omitempty"`
+	SecurityLevel           *string         `json:"securityLevel,omitempty"`
+	ServerSideExclude       *bool           `json:"serverSideExclude,omitempty"`
+	SortQueryStringForCache *bool           `json:"sortQueryStringForCache,omitempty"`
+	SSL                     *bool           `json:"ssl,omitempty"`
+	MinTLSVersion           *string         `json:"minTLSVersion,omitempty"`
+	Ciphers                 []*string       `json:"ciphers,omitempty"`
+	TLS13                   *bool           `json:"tls13,omitempty"`
+	TLSClientAuth           *bool           `json:"tlsClientAuth,omitempty"`
+	TrueClientIPHeader      *bool           `json:"trueClientIPHeader,omitempty"`
+	WAF                     *bool           `json:"waf,omitempty"`
+	HTTP2                   *bool           `json:"http2,omitempty"`
+	HTTP3                   *bool           `json:"http3,omitempty"`
+	ZeroRTT                 *bool           `json:"0rtt,omitempty"`
+	PseudoIPV4              *bool           `json:"pseudoIPV4,omitempty"`
+	Websockets              *bool           `json:"websockets,omitempty"`
+	ImageResizing           *bool           `json:"imageResizing,omitempty"`
+	HTTP2Prioritization     *bool           `json:"http2Prioritization,omitempty"`
 }
 
 // ZoneSpec defines the desired state of Zone

@@ -40,6 +40,8 @@ spec:
               type: string
             settings:
               properties:
+                0rtt:
+                  type: boolean
                 advancedDDOS:
                   type: boolean
                 alwaysOnline:
@@ -58,16 +60,30 @@ spec:
                   type: string
                 challengeTTL:
                   type: integer
+                ciphers:
+                  items:
+                    type: string
+                  type: array
                 developmentMode:
                   type: boolean
                 emailObfuscation:
                   type: boolean
                 hotlinkProtection:
                   type: boolean
+                http2:
+                  type: boolean
+                http2Prioritization:
+                  type: boolean
+                http3:
+                  type: boolean
+                imageResizing:
+                  type: boolean
                 ipGeolocation:
                   type: boolean
                 ipv6:
                   type: boolean
+                minTLSVersion:
+                  type: string
                 minify:
                   properties:
                     css:
@@ -102,11 +118,42 @@ spec:
                   type: boolean
                 privacyPass:
                   type: boolean
+                pseudoIPV4:
+                  type: boolean
                 responseBuffering:
                   type: boolean
                 rocketLoader:
                   type: boolean
+                securityHeader:
+                  properties:
+                    enabled:
+                      type: boolean
+                    includeSubdomains:
+                      type: boolean
+                    maxAge:
+                      type: integer
+                    noSniff:
+                      type: boolean
+                  type: object
+                securityLevel:
+                  type: string
+                serverSideExclude:
+                  type: boolean
+                sortQueryStringForCache:
+                  type: boolean
+                ssl:
+                  type: boolean
+                tls13:
+                  type: boolean
+                tlsClientAuth:
+                  type: boolean
+                trueClientIPHeader:
+                  type: boolean
+                waf:
+                  type: boolean
                 webp:
+                  type: boolean
+                websockets:
                   type: boolean
               type: object
           required:
