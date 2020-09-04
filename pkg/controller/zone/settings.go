@@ -2,6 +2,7 @@ package zone
 
 import (
 	"context"
+	"sort"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/pkg/errors"
@@ -159,6 +160,96 @@ func ReconcileSettings(ctx context.Context, instance crdsv1alpha1.Zone, cf *clou
 			}
 		case "rocket_loader":
 			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.RocketLoader)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "security_header":
+			needsUpdate := compareAndUpdateSecurityHeaderZoneSetting(&zoneSetting, instance.Spec.Settings.SecurityHeader)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "security_level":
+			needsUpdate := compareAndUpdateStringZoneSetting(&zoneSetting, instance.Spec.Settings.SecurityLevel)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "server_side_exclude":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.ServerSideExclude)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "sort_query_string_for_cache":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.SortQueryStringForCache)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "ssl":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.SSL)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "min_tls_version":
+			needsUpdate := compareAndUpdateStringZoneSetting(&zoneSetting, instance.Spec.Settings.MinTLSVersion)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "ciphers":
+			needsUpdate := compareAndUpdateStringArrayZoneSetting(&zoneSetting, instance.Spec.Settings.Ciphers)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "tls_1_3":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.TLS13)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "tls_client_auth":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.TLSClientAuth)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "true_client_ip_header":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.TrueClientIPHeader)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "waf":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.WAF)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "http2":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.HTTP2)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "http3":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.HTTP3)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "0rtt":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.ZeroRTT)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "pseudo_ipv4":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.PseudoIPV4)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "websockets":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.Websockets)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "image_resizing":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.ImageResizing)
+			if needsUpdate {
+				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
+			}
+		case "h2_prioritization":
+			needsUpdate := compareAndUpdateBoolZoneSetting(&zoneSetting, instance.Spec.Settings.HTTP2Prioritization)
 			if needsUpdate {
 				updatedZoneSettings = append(updatedZoneSettings, zoneSetting)
 			}
@@ -321,4 +412,82 @@ func compareAndUpdateMobileRedirectZoneSetting(zoneSetting *cloudflare.ZoneSetti
 	}
 
 	return hasChanged
+}
+
+func compareAndUpdateSecurityHeaderZoneSetting(zoneSetting *cloudflare.ZoneSetting, desiredValue *crdsv1alpha1.SecurityHeader) bool {
+	if desiredValue == nil {
+		return false
+	}
+
+	hasChanged := false
+
+	if desiredValue.Enabled != nil {
+		currentEnabled := zoneSetting.Value.(map[string]interface{})["enabled"].(bool)
+		if *desiredValue.Enabled != currentEnabled {
+			zoneSetting.Value.(map[string]interface{})["enabled"] = *desiredValue.Enabled
+			hasChanged = true
+		}
+	}
+
+	if desiredValue.MaxAge != nil {
+		currentMaxAge := int(zoneSetting.Value.(map[string]interface{})["max_age"].(float64))
+		if *desiredValue.MaxAge != currentMaxAge {
+			zoneSetting.Value.(map[string]interface{})["max_age"] = *desiredValue.MaxAge
+			hasChanged = true
+		}
+	}
+
+	if desiredValue.IncludeSubdomains != nil {
+		currentIncludeSubdomains := zoneSetting.Value.(map[string]interface{})["include_subdomains"].(bool)
+		if *desiredValue.IncludeSubdomains != currentIncludeSubdomains {
+			zoneSetting.Value.(map[string]interface{})["include_subdomains"] = *desiredValue.IncludeSubdomains
+			hasChanged = true
+		}
+	}
+
+	if desiredValue.NoSniff != nil {
+		currentNoSniff := zoneSetting.Value.(map[string]interface{})["no_sniff"].(bool)
+		if *desiredValue.NoSniff != currentNoSniff {
+			zoneSetting.Value.(map[string]interface{})["no_sniff"] = *desiredValue.NoSniff
+			hasChanged = true
+		}
+	}
+
+	return hasChanged
+}
+
+func compareAndUpdateStringArrayZoneSetting(zoneSetting *cloudflare.ZoneSetting, desiredValue []*string) bool {
+	if desiredValue == nil || len(desiredValue) == 0 {
+		return false
+	}
+
+	current := []string{}
+	for _, d := range zoneSetting.Value.([]interface{}) {
+		current = append(current, d.(string))
+	}
+
+	desired := []string{}
+	for _, d := range desiredValue {
+		desired = append(desired, *d)
+	}
+
+	sort.Strings(current)
+	sort.Strings(desired)
+
+	hasChanged := len(current) != len(desired)
+
+	if !hasChanged {
+		for i, v := range current {
+			if v != desired[i] {
+				hasChanged = true
+			}
+		}
+	}
+
+	if !hasChanged {
+		return false
+	}
+
+	zoneSetting.Value = desiredValue
+	return true
 }

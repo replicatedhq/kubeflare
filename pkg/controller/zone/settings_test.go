@@ -61,3 +61,48 @@ func Test_compareAndUpdateMobileRedirectZoneSetting(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareAndUpdateStringArrayZoneSetting(t *testing.T) {
+	tests := []struct {
+		name         string
+		zoneSetting  []interface{}
+		desiredValue []string
+		expected     bool
+	}{
+		{
+			name: "no change",
+			zoneSetting: []interface{}{
+				"A",
+			},
+			desiredValue: []string{
+				"A",
+			},
+			expected: false,
+		},
+		{
+			name: "change",
+			zoneSetting: []interface{}{
+				"A",
+				"B",
+			},
+			desiredValue: []string{
+				"A",
+			},
+			expected: true,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			zoneSetting := cloudflare.ZoneSetting{
+				Value: test.zoneSetting,
+			}
+			desiredValue := []*string{}
+			for _, d := range test.desiredValue {
+				desiredValue = append(desiredValue, &d)
+			}
+
+			actual := compareAndUpdateStringArrayZoneSetting(&zoneSetting, desiredValue)
+			assert.Equal(t, test.expected, actual)
+		})
+	}
+}
