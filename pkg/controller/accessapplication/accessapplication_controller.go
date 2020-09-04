@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package dnsrecord
+package accessapplication
 
 import (
 	"context"
@@ -35,7 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-// Add creates a new DNSRecord Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
+// Add creates a new AccessApplication Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
 	return add(mgr, newReconciler(mgr))
@@ -43,7 +43,7 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileDNSRecord{
+	return &ReconcileAccessApplication{
 		Client: mgr.GetClient(),
 		scheme: mgr.GetScheme(),
 	}
@@ -52,17 +52,17 @@ func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
-	c, err := controller.New("dnsrecord-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("accessapplication-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
 		return err
 	}
 
-	// Watch for changes to DNSRecord
+	// Watch for changes to AccessApplication
 	err = c.Watch(&source.Kind{
-		Type: &crdsv1alpha1.DNSRecord{},
+		Type: &crdsv1alpha1.AccessApplication{},
 	}, &handler.EnqueueRequestForObject{})
 	if err != nil {
-		return errors.Wrap(err, "failed to start watch on dnsrecords")
+		return errors.Wrap(err, "failed to start watch on accessapplication")
 	}
 
 	generatedClient := kubernetes.NewForConfigOrDie(mgr.GetConfig())
@@ -79,23 +79,23 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-var _ reconcile.Reconciler = &ReconcileDNSRecord{}
+var _ reconcile.Reconciler = &ReconcileAccessApplication{}
 
-// ReconcileDNSRecord reconciles a DNSRecord object
-type ReconcileDNSRecord struct {
+// ReconcileAccessApplication reconciles a AccessApplication object
+type ReconcileAccessApplication struct {
 	client.Client
 	scheme *runtime.Scheme
 }
 
-// Reconcile reads that state of the cluster for a ReconcileDNSRecord object and makes changes based on the state read
+// Reconcile reads that state of the cluster for a ReconcileAccessApplication object and makes changes based on the state read
 // and what is in the Zone.Spec
-// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=dnsrecords,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=dnsrecords/status,verbs=get;update;patch
-func (r *ReconcileDNSRecord) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	// This reconcile loop will be called for all ReconcileDNSRecord objects
+// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=accessapplications,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=accessapplications/status,verbs=get;update;patch
+func (r *ReconcileAccessApplication) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	// This reconcile loop will be called for all ReconcileAccessApplication objects
 	// because of the informer that we have set up
 	ctx := context.Background()
-	instance := crdsv1alpha1.DNSRecord{}
+	instance := crdsv1alpha1.AccessApplication{}
 	err := r.Get(ctx, request.NamespacedName, &instance)
 	if err != nil {
 		logger.Error(err)
@@ -114,7 +114,26 @@ func (r *ReconcileDNSRecord) Reconcile(request reconcile.Request) (reconcile.Res
 		return reconcile.Result{}, err
 	}
 
-	if err := ReconcileDNSRecordInstances(ctx, instance, zone, cf); err != nil {
+	// if the instanace status subresource doesn't contain an application id, update it now
+	if instance.Status.ApplicationID == "" {
+		existingApplication, err := findExistingAccessApplication(instance, zone, cf)
+		if err != nil {
+			logger.Error(err)
+			return reconcile.Result{}, nil
+		}
+
+		if existingApplication != nil {
+			instance.Status.ApplicationID = existingApplication.ID
+			err := r.Status().Update(ctx, &instance)
+			if err != nil {
+				logger.Error(err)
+				return reconcile.Result{}, nil
+			}
+		}
+	}
+
+	_, err = ReconcileAccessApplicationInstance(ctx, instance, zone, cf)
+	if err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}

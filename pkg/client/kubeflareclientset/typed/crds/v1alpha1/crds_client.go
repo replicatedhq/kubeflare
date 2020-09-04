@@ -27,6 +27,7 @@ import (
 type CrdsV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	APITokensGetter
+	AccessApplicationsGetter
 	DNSRecordsGetter
 	ZonesGetter
 }
@@ -38,6 +39,10 @@ type CrdsV1alpha1Client struct {
 
 func (c *CrdsV1alpha1Client) APITokens(namespace string) APITokenInterface {
 	return newAPITokens(c, namespace)
+}
+
+func (c *CrdsV1alpha1Client) AccessApplications(namespace string) AccessApplicationInterface {
+	return newAccessApplications(c, namespace)
 }
 
 func (c *CrdsV1alpha1Client) DNSRecords(namespace string) DNSRecordInterface {
