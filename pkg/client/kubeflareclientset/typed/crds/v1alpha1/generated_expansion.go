@@ -20,4 +20,6 @@ package v1alpha1
 
 type APITokenExpansion interface{}
 
+type DNSRecordExpansion interface{}
+
 type ZoneExpansion interface{}

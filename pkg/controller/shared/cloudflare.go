@@ -1,11 +1,10 @@
-package zone
+package shared
 
 import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/pkg/errors"
-	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	crdsclientv1alpha1 "github.com/replicatedhq/kubeflare/pkg/client/kubeflareclientset/typed/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"go.uber.org/zap"
@@ -13,7 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
-func (r *ReconcileZone) getCloudflareAPI(ctx context.Context, instance crdsv1alpha1.Zone) (*cloudflare.API, error) {
+func GetCloudflareAPI(ctx context.Context, namespace string, apiTokenName string) (*cloudflare.API, error) {
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get config")
@@ -24,7 +23,7 @@ func (r *ReconcileZone) getCloudflareAPI(ctx context.Context, instance crdsv1alp
 		return nil, errors.Wrap(err, "failed to create crds client")
 	}
 
-	apiToken, err := crdsClient.APITokens(instance.Namespace).Get(ctx, instance.Spec.APIToken, metav1.GetOptions{})
+	apiToken, err := crdsClient.APITokens(namespace).Get(ctx, apiTokenName, metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get api token")
 	}

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package zone
+package dnsrecord
 
 import (
 	"context"
@@ -35,7 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-// Add creates a new Zone Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
+// Add creates a new DNSRecord Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
 	return add(mgr, newReconciler(mgr))
@@ -43,7 +43,7 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileZone{
+	return &ReconcileDNSRecord{
 		Client: mgr.GetClient(),
 		scheme: mgr.GetScheme(),
 	}
@@ -52,17 +52,17 @@ func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
-	c, err := controller.New("zone-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("dnsrecord-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
 		return err
 	}
 
-	// Watch for changes to Zone
+	// Watch for changes to DNSRecord
 	err = c.Watch(&source.Kind{
-		Type: &crdsv1alpha1.Zone{},
+		Type: &crdsv1alpha1.DNSRecord{},
 	}, &handler.EnqueueRequestForObject{})
 	if err != nil {
-		return errors.Wrap(err, "failed to start watch on zones")
+		return errors.Wrap(err, "failed to start watch on dnsrecords")
 	}
 
 	generatedClient := kubernetes.NewForConfigOrDie(mgr.GetConfig())
@@ -79,36 +79,42 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-var _ reconcile.Reconciler = &ReconcileZone{}
+var _ reconcile.Reconciler = &ReconcileDNSRecord{}
 
-// ReconcileZone reconciles a Zone object
-type ReconcileZone struct {
+// ReconcileDNSRecord reconciles a DNSRecord object
+type ReconcileDNSRecord struct {
 	client.Client
 	scheme *runtime.Scheme
 }
 
-// Reconcile reads that state of the cluster for a Zone object and makes changes based on the state read
+// Reconcile reads that state of the cluster for a ReconcileDNSRecord object and makes changes based on the state read
 // and what is in the Zone.Spec
-// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=zones,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=zones/status,verbs=get;update;patch
-func (r *ReconcileZone) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	// This reconcile loop will be called for all Zone objects
+// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=dnsrecords,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=crds.kubeflare.io,resources=dnsrecords/status,verbs=get;update;patch
+func (r *ReconcileDNSRecord) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	// This reconcile loop will be called for all ReconcileDNSRecord objects
 	// because of the informer that we have set up
 	ctx := context.Background()
-	instance := crdsv1alpha1.Zone{}
+	instance := crdsv1alpha1.DNSRecord{}
 	err := r.Get(ctx, request.NamespacedName, &instance)
 	if err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}
 
-	cf, err := shared.GetCloudflareAPI(ctx, instance.Namespace, instance.Spec.APIToken)
+	zone, err := shared.GetZone(ctx, instance.Namespace, instance.Spec.Zone)
 	if err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}
 
-	if err := ReconcileSettings(ctx, instance, cf); err != nil {
+	cf, err := shared.GetCloudflareAPI(ctx, instance.Namespace, zone.Spec.APIToken)
+	if err != nil {
+		logger.Error(err)
+		return reconcile.Result{}, err
+	}
+
+	if err := ReconcileDNSRecords(ctx, instance, zone, cf); err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}

@@ -20,15 +20,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type DNSRecord struct {
-	Type     string `json:"type"`
-	Name     string `json:"name"`
-	Content  string `json:"content"`
-	TTL      *int   `json:"ttl,omitempty"`
-	Priority *int   `json:"priority,omitempty"`
-	Proxied  *bool  `json:"proxied,omitempty"`
-}
-
 type MobileRedirect struct {
 	Status          *bool   `json:"status,omi2tempty"`
 	MobileSubdomain *string `json:"mobileSubdomain,omitempty"`
@@ -72,9 +63,8 @@ type ZoneSettings struct {
 
 // ZoneSpec defines the desired state of Zone
 type ZoneSpec struct {
-	APIToken   string        `json:"apiToken"`
-	Settings   *ZoneSettings `json:"settings,omitempty"`
-	DNSRecords []*DNSRecord  `json:"dnsRecords,omitempty"`
+	APIToken string        `json:"apiToken"`
+	Settings *ZoneSettings `json:"settings,omitempty"`
 }
 
 // ZoneStatus defines the observed state of Zone
