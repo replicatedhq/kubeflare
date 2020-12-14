@@ -4,7 +4,7 @@ Kuebflare is a Kubernetes cluster add-on (Operator) that allows you to manage yo
 
 After installing the Kubeflare Operator to your Kubernetes cluster, some new custom types will be created in the cluster. These types allow you to define a Cloudflare Zone (domain) and specify the settings and DNS records to create. When this YAML is deployed to the cluster, the Kubeflare Operator will reconcile this with the Cloudflare API to deploy the settings requested in the YAML to the Cloudflare account.
 
-## Motiviation
+## Motivation
 
 This project was created at [Replicated](https://www.replicated.com) to manage Cloudflare settings using our GitOps workflow. We wanted a way for a devleoper to commit their DNS records and other Cloudflare settings to be reviewed and deployed with their code, as a single deployment. This tightly couples the infrastructure changes with the application changes, and makes deploying new services easier and more transparant.
 
