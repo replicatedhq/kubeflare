@@ -40,6 +40,10 @@ func (c *FakeCrdsV1alpha1) DNSRecords(namespace string) v1alpha1.DNSRecordInterf
 	return &FakeDNSRecords{c, namespace}
 }
 
+func (c *FakeCrdsV1alpha1) PageRules(namespace string) v1alpha1.PageRuleInterface {
+	return &FakePageRules{c, namespace}
+}
+
 func (c *FakeCrdsV1alpha1) Zones(namespace string) v1alpha1.ZoneInterface {
 	return &FakeZones{c, namespace}
 }

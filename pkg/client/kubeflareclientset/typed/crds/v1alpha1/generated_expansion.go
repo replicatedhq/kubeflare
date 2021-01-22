@@ -24,4 +24,6 @@ type AccessApplicationExpansion interface{}
 
 type DNSRecordExpansion interface{}
 
+type PageRuleExpansion interface{}
+
 type ZoneExpansion interface{}
