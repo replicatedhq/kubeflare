@@ -1,0 +1,12 @@
+site_name: Kubeflare Docs
+theme:
+  name: material
+
+nav:
+  - Home: 'index.md'
+  - Installing:
+      - 'Install with kubectl': 'install/kubectl.md'
+      - 'Install with Helm': 'install/helm.md'
+  - API:
+      - 'Zone': 'api/zone.md'
+      - 'DNSRecord': 'api/dnsrecord.md'
