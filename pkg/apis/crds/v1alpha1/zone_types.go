@@ -44,7 +44,7 @@ type ZoneSettings struct {
 	AlwaysOnline            *bool           `json:"alwaysOnline,omitempty"`
 	AlwaysUseHTTPS          *bool           `json:"alwaysUseHttps,omitempty"`
 	OpportunisticOnion      *bool           `json:"opportunisticOnion,omitempty"`
-	AutomaticHTTPSRewrites  *bool           `json:"automaticHTTSRewrites,omitempty"`
+	AutomaticHTTPSRewrites  *bool           `json:"automaticHTTPSRewrites,omitempty"`
 	BrowserCacheTTL         *int            `json:"browserCacheTTL,omitempty"`
 	BrowserCheck            *bool           `json:"browserCheck,omitempty"`
 	CacheLevel              *string         `json:"cacheLevel,omitempty"`
