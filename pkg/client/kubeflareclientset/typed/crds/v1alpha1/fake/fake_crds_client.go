@@ -32,6 +32,10 @@ func (c *FakeCrdsV1alpha1) APITokens(namespace string) v1alpha1.APITokenInterfac
 	return &FakeAPITokens{c, namespace}
 }
 
+func (c *FakeCrdsV1alpha1) AccessApplications(namespace string) v1alpha1.AccessApplicationInterface {
+	return &FakeAccessApplications{c, namespace}
+}
+
 func (c *FakeCrdsV1alpha1) DNSRecords(namespace string) v1alpha1.DNSRecordInterface {
 	return &FakeDNSRecords{c, namespace}
 }

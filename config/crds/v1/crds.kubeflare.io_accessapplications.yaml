@@ -1,0 +1,135 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.8
+  creationTimestamp: null
+  name: accessapplications.crds.kubeflare.io
+spec:
+  group: crds.kubeflare.io
+  names:
+    kind: AccessApplication
+    listKind: AccessApplicationList
+    plural: accessapplications
+    singular: accessapplication
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: DNSRecord is the Schema for the accessapplication API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: AccessApplicationSpec defines the desired state of AccessApplication
+            properties:
+              accessPolicies:
+                items:
+                  properties:
+                    descision:
+                      type: string
+                    exclude:
+                      items:
+                        type: string
+                      type: array
+                    include:
+                      items:
+                        type: string
+                      type: array
+                    name:
+                      type: string
+                    precendence:
+                      type: integer
+                    require:
+                      items:
+                        type: string
+                      type: array
+                  required:
+                  - descision
+                  - include
+                  - name
+                  type: object
+                type: array
+              allowedIdPs:
+                items:
+                  type: string
+                type: array
+              autoRedirectToIndentiy:
+                type: boolean
+              corsHeaders:
+                properties:
+                  allowAllHeaders:
+                    type: boolean
+                  allowAllMethods:
+                    type: boolean
+                  allowAllOrigins:
+                    type: boolean
+                  allowCredentials:
+                    type: boolean
+                  allowedHeader:
+                    items:
+                      type: string
+                    type: array
+                  allowedMethods:
+                    items:
+                      type: string
+                    type: array
+                  allowedOrigins:
+                    items:
+                      type: string
+                    type: array
+                  maxAge:
+                    type: integer
+                required:
+                - allowAllHeaders
+                - allowAllMethods
+                - allowAllOrigins
+                - allowCredentials
+                - allowedHeader
+                - allowedMethods
+                - allowedOrigins
+                - maxAge
+                type: object
+              domain:
+                type: string
+              name:
+                type: string
+              sessionDuration:
+                type: string
+              zone:
+                type: string
+            required:
+            - domain
+            - name
+            - zone
+            type: object
+          status:
+            description: AccessApplicationStatus defines the observed state of AccessApplicationS
+            properties:
+              applicationID:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

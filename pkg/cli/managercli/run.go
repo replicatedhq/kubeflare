@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/replicatedhq/kubeflare/pkg/apis"
+	accessapplicationcontroller "github.com/replicatedhq/kubeflare/pkg/controller/accessapplication"
+	dnsrecordcontroller "github.com/replicatedhq/kubeflare/pkg/controller/dnsrecord"
 	zonecontroller "github.com/replicatedhq/kubeflare/pkg/controller/zone"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"github.com/replicatedhq/kubeflare/pkg/version"
@@ -61,6 +63,16 @@ func RunCmd() *cobra.Command {
 			}
 
 			if err := zonecontroller.Add(mgr); err != nil {
+				logger.Error(err)
+				os.Exit(1)
+			}
+
+			if err := dnsrecordcontroller.Add(mgr); err != nil {
+				logger.Error(err)
+				os.Exit(1)
+			}
+
+			if err := accessapplicationcontroller.Add(mgr); err != nil {
 				logger.Error(err)
 				os.Exit(1)
 			}

@@ -9,7 +9,7 @@ import (
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 )
 
-func ReconcileDNSRecords(ctx context.Context, instance crdsv1alpha1.DNSRecord, zone *crdsv1alpha1.Zone, cf *cloudflare.API) error {
+func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSRecord, zone *crdsv1alpha1.Zone, cf *cloudflare.API) error {
 	logger.Debug("reconcileDNSRecords for zone")
 
 	zoneID, err := cf.ZoneIDByName(zone.Name)
