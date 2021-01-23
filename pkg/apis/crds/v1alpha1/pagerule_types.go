@@ -34,13 +34,13 @@ type Rule struct {
 
 // PageRuleSpec defines the desired state of PageRule
 type PageRuleSpec struct {
-	Zone  string  `json:"zone"`
-	Rule  *Rule   `json:"pageRule,omitempty"`
-	Rules []*Rule `json:"pageRules,omitempty"`
+	Zone string `json:"zone"`
+	Rule *Rule  `json:"pageRule,omitempty"`
 }
 
 // PageRuleStatus defines the observed state of PageRule
 type PageRuleStatus struct {
+	ID string `json:"id,omitempty"`
 }
 
 // +genclient

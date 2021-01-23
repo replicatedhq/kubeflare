@@ -114,7 +114,7 @@ func (r *ReconcilePageRule) Reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, err
 	}
 
-	if err := ReconcilePageRules(ctx, instance, zone, cf); err != nil {
+	if err := r.ReconcilePageRules(ctx, instance, zone, cf); err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}

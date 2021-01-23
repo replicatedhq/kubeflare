@@ -1,7 +1,7 @@
 # PageRule
 
 A `kind: PageRule` resource will manage one or more PageRules in a manage [zone](../zone).
-Each resource can contain a single PageRule record when specified under `spec.pagerule` or multiple when specified under `spec.pagerules`.
+Each resource contains a single PageRule record.
 
 ## Attributes
 
@@ -11,7 +11,7 @@ Each `kind: PageRule` must contain a `spec.zone` string attribute.
 The value of this attribute must match a [zone](../zone) managed by Kubeflare.
 The API token to manage the DNS record(s) will be read from the associated Zone kind resource.
 
-### PageRule(s)
+### PageRule
 
 For more information on this type, see the [Cloudflare documentation](https://api.cloudflare.com/#page-rules-for-a-zone-create-page-rule).
 

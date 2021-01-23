@@ -56,28 +56,6 @@ spec:
                   status:
                     type: string
                 type: object
-              pageRules:
-                items:
-                  properties:
-                    forwardingUrl:
-                      properties:
-                        redirectUrl:
-                          type: string
-                        requestUrl:
-                          type: string
-                        statusCode:
-                          type: integer
-                      required:
-                      - redirectUrl
-                      - requestUrl
-                      - statusCode
-                      type: object
-                    priority:
-                      type: integer
-                    status:
-                      type: string
-                  type: object
-                type: array
               zone:
                 type: string
             required:
@@ -85,6 +63,9 @@ spec:
             type: object
           status:
             description: PageRuleStatus defines the observed state of PageRule
+            properties:
+              id:
+                type: string
             type: object
         type: object
     served: true
