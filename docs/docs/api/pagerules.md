@@ -16,15 +16,41 @@ The API token to manage the DNS record(s) will be read from the associated Zone 
 For more information on this type, see the [Cloudflare documentation](https://api.cloudflare.com/#page-rules-for-a-zone-create-page-rule).
 
 The following attributes are supported in the `pagerule` or `pagerules` object.
-Priority and status are optional, and exactly one of the other fields (rules) should be present on the object.
+Priority and status are optional, and at least one of the other fields (rules) should be present on the object.
+Check the Cloudflare documentation to ensure the combination of rules (settings) are compatbile.
 
 | Name | Type | Description |
 |------|------|-------------|
 | requestUrl | string | The incoming (original) request url |
 | priority | int | | 
-| status | string | |
-| forwardingUrl | [ForwardingURL](#forwardingURL) | When present, the forwarding url page rule
-| alwaysUseHttps | [AlwaysUseHTTPS](#alwaysUseHTTPS) | When present, the always use https page rule
+| enabled | boolean | |
+| alwaysOnline | [AlwaysOnline](#alwaysonline) | When present, the always online page rule
+| alwaysUseHttps | [AlwaysUseHTTPS](#alwaysusehttps) | When present, the always use https page rule
+| autoMinify | [AutoMinify](#autominify) | When present, the auto minify page rule
+| forwardingUrl | [ForwardingURL](#forwardingurl) | When present, the forwarding url page rule
+
+### AlwaysOnline
+
+The AlwaysOnline object describes the always online page rule.
+
+| Name | Type | Description |
+|------|------|-------------|
+| enabled | boolean | The value of the always online setting |
+
+### AlwaysUseHTTPS
+
+The AlwaysUseHTTPS object is an empty object that enables the always use https pagerule.
+
+### AutoMinify 
+
+The AutoMinify object describes an auto minify page rule settings.
+
+| Name | Type | Description |
+|------|------|-------------|
+| html | boolean | The value for the html setting |
+| css | boolean | The value for the css setting |
+| js | boolean | The value for the js setting |
+
 
 ### ForwardingURL
 
@@ -35,9 +61,6 @@ The ForwardingURL object describes a forwarding url page rule.
 | statusCode | int | 301 or 302, the status code to send |
 | redirectUrl | string | The redirect/forwarded url |
 
-### AlwaysUseHTTPS
-
-The AlwaysUseHTTPS object is an empty object that enables the always use https pagerule.
 
 ## Examples
 

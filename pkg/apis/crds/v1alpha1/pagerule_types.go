@@ -20,6 +20,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type AutoMinifyPageRule struct {
+	HTML bool `json:"html"`
+	CSS  bool `json:"css"`
+	JS   bool `json:"js"`
+}
+
 type AlwaysUseHTTPSPageRule struct {
 }
 
@@ -33,9 +39,10 @@ type Rule struct {
 
 	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
 	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
+	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
 
-	Priority *int    `json:"priority,omitempty"`
-	Status   *string `json:"status,omitempty"`
+	Priority *int `json:"priority,omitempty"`
+	Enabled  bool `json:"enabled,omitempty"`
 }
 
 // PageRuleSpec defines the desired state of PageRule

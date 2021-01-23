@@ -40,6 +40,21 @@ spec:
               properties:
                 alwaysUseHttps:
                   type: object
+                autoMinify:
+                  properties:
+                    css:
+                      type: boolean
+                    html:
+                      type: boolean
+                    js:
+                      type: boolean
+                  required:
+                  - css
+                  - html
+                  - js
+                  type: object
+                enabled:
+                  type: boolean
                 forwardingUrl:
                   properties:
                     redirectUrl:
@@ -53,8 +68,6 @@ spec:
                 priority:
                   type: integer
                 requestUrl:
-                  type: string
-                status:
                   type: string
               required:
               - requestUrl

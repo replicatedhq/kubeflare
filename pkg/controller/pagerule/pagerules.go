@@ -28,9 +28,12 @@ func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crd
 func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
 	rule := cloudflare.PageRule{}
 
-	if instance.Spec.Rule.Status != nil {
-		rule.Status = *instance.Spec.Rule.Status
+	if instance.Spec.Rule.Enabled {
+		rule.Status = "enabled"
+	} else {
+		rule.Status = "disabled"
 	}
+
 	if instance.Spec.Rule.Priority != nil {
 		rule.Priority = *instance.Spec.Rule.Priority
 	}
