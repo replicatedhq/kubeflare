@@ -35,20 +35,20 @@ func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance crdsv1a
 		rule.Priority = *instance.Spec.Rule.Priority
 	}
 
-	if instance.Spec.Rule.ForwardingURL != nil {
-		rule.Targets = []cloudflare.PageRuleTarget{
-			{
-				Target: "url",
-				Constraint: struct {
-					Operator string `json:"operator"`
-					Value    string `json:"value"`
-				}{
-					Operator: "matches",
-					Value:    instance.Spec.Rule.ForwardingURL.RequestURL,
-				},
+	rule.Targets = []cloudflare.PageRuleTarget{
+		{
+			Target: "url",
+			Constraint: struct {
+				Operator string `json:"operator"`
+				Value    string `json:"value"`
+			}{
+				Operator: "matches",
+				Value:    instance.Spec.Rule.RequestURL,
 			},
-		}
+		},
+	}
 
+	if instance.Spec.Rule.ForwardingURL != nil {
 		rule.Actions = []cloudflare.PageRuleAction{
 			{
 				ID: "forwarding_url",
@@ -56,6 +56,13 @@ func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance crdsv1a
 					"url":         instance.Spec.Rule.ForwardingURL.RedirectURL,
 					"status_code": instance.Spec.Rule.ForwardingURL.StatusCode,
 				},
+			},
+		}
+	}
+	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
+		rule.Actions = []cloudflare.PageRuleAction{
+			{
+				ID: "always_use_https",
 			},
 		}
 	}

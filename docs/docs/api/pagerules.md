@@ -20,9 +20,11 @@ Priority and status are optional, and exactly one of the other fields (rules) sh
 
 | Name | Type | Description |
 |------|------|-------------|
+| requestUrl | string | The incoming (original) request url |
 | priority | int | | 
 | status | string | |
 | forwardingUrl | [ForwardingURL](#forwardingURL) | When present, the forwarding url page rule
+| alwaysUseHttps | [AlwaysUseHTTPS](#alwaysUseHTTPS) | When present, the always use https page rule
 
 ### ForwardingURL
 
@@ -30,9 +32,12 @@ The ForwardingURL object describes a forwarding url page rule.
 
 | Name | Type | Description |
 |------|------|-------------|
-| requestUrl | string | The incoming (original) request url |
 | statusCode | int | 301 or 302, the status code to send |
 | redirectUrl | string | The redirect/forwarded url |
+
+### AlwaysUseHTTPS
+
+The AlwaysUseHTTPS object is an empty object that enables the always use https pagerule.
 
 ## Examples
 
@@ -48,8 +53,24 @@ metadata:
 spec:
   zone: example.com
   rule:
+    requestUrl: "www.example.com/*"
     forwardingUrl:
-      requestUrl: "www.example.com/*"
       statusCode: 302
       redirectUrl: "https://example.com/$1
+```
+
+### Always Use HTTPS
+
+The following PageRule manifest will enable always use https on a specific path:
+
+```yaml
+apiVersion: crds.kubeflare.io/v1alpha1
+kind: PageRule
+metadata:
+  name: www.example.com
+spec:
+  zone: example.com
+  rule:
+    requestUrl: "www.example.com/*"
+    alwaysUseHttps: {}
 ```

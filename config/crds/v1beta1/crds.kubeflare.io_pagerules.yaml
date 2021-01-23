@@ -38,23 +38,26 @@ spec:
           properties:
             pageRule:
               properties:
+                alwaysUseHttps:
+                  type: object
                 forwardingUrl:
                   properties:
                     redirectUrl:
-                      type: string
-                    requestUrl:
                       type: string
                     statusCode:
                       type: integer
                   required:
                   - redirectUrl
-                  - requestUrl
                   - statusCode
                   type: object
                 priority:
                   type: integer
+                requestUrl:
+                  type: string
                 status:
                   type: string
+              required:
+              - requestUrl
               type: object
             zone:
               type: string

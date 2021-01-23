@@ -20,16 +20,22 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type AlwaysUseHTTPSPageRule struct {
+}
+
 type ForwardingURLPageRule struct {
-	RequestURL  string `json:"requestUrl"`
 	StatusCode  int    `json:"statusCode"`
 	RedirectURL string `json:"redirectUrl"`
 }
 
 type Rule struct {
-	ForwardingURL *ForwardingURLPageRule `json:"forwardingUrl,omitempty"`
-	Priority      *int                   `json:"priority,omitempty"`
-	Status        *string                `json:"status,omitempty"`
+	RequestURL string `json:"requestUrl"`
+
+	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
+	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
+
+	Priority *int    `json:"priority,omitempty"`
+	Status   *string `json:"status,omitempty"`
 }
 
 // PageRuleSpec defines the desired state of PageRule
