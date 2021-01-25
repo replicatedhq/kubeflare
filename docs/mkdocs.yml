@@ -10,3 +10,4 @@ nav:
   - API:
       - 'Zone': 'api/zone.md'
       - 'DNSRecord': 'api/dnsrecord.md'
+      - 'PageRules': 'api/pagerules.md'

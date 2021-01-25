@@ -1,6 +1,6 @@
 # Zone
 
-A `kind: Zone` resource is created per domain name that's managed in Cloudflare.
+A `kind: Zone` resource should be created per domain name that's managed in Cloudflare.
 Here you can specify the API Token and any Zone settings.
 
 A `kind: Zone` resource is required in order to configure any additional api types on a Cloudflare domain.
@@ -59,7 +59,7 @@ spec:
 ## `settings`
 
 All [Cloudflare Zone Settings](https://api.cloudflare.com/#zone-settings-properties) can be specified in the `settings` key of this resource.
-Kubeflare uses a lowerCamelCase standard to specify all fields in the Cloudflare Zone, while Cloudflare uses both snake_case and lowerCamelCase at times.
+Kubeflare uses a lowerCamelCase standard to specify all fields in the Cloudflare Zone.
 
 Note that the Cloudflare API and docs use string types with values of "off" and "on" for boolean settings.
 Kubeflare uses boolean objects (true, false) and will map those to the string types accepted by Cloudflare.

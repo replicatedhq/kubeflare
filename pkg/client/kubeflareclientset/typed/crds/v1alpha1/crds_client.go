@@ -29,6 +29,7 @@ type CrdsV1alpha1Interface interface {
 	APITokensGetter
 	AccessApplicationsGetter
 	DNSRecordsGetter
+	PageRulesGetter
 	ZonesGetter
 }
 
@@ -47,6 +48,10 @@ func (c *CrdsV1alpha1Client) AccessApplications(namespace string) AccessApplicat
 
 func (c *CrdsV1alpha1Client) DNSRecords(namespace string) DNSRecordInterface {
 	return newDNSRecords(c, namespace)
+}
+
+func (c *CrdsV1alpha1Client) PageRules(namespace string) PageRuleInterface {
+	return newPageRules(c, namespace)
 }
 
 func (c *CrdsV1alpha1Client) Zones(namespace string) ZoneInterface {

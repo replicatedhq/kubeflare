@@ -48,7 +48,7 @@ spec:
                     type: boolean
                   alwaysUseHttps:
                     type: boolean
-                  automaticHTTSRewrites:
+                  automaticHTTPSRewrites:
                     type: boolean
                   brotli:
                     type: boolean
