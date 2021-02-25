@@ -6,10 +6,10 @@ RUN apt-get update \
  && apt-get -y install \
     ca-certificates
 
-ADD ./bin/manager /manager
+ADD ./bin/kubeflare /kubeflare
 
 RUN useradd -c 'kubeflare user' -m -d /home/kubeflare -s /bin/bash -u 1001 kubeflare
 USER kubeflare
 ENV HOME /home/kubeflare
 
-ENTRYPOINT ["/manager", "run"]
+ENTRYPOINT ["/kubeflare", "manager"]

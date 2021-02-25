@@ -1,4 +1,4 @@
-package managercli
+package kubeflarecli
 
 import (
 	"os"
@@ -18,10 +18,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 )
 
-func RunCmd() *cobra.Command {
+func ManagerCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "run",
-		Short:         "runs the kubeflare manager",
+		Use:           "manager",
+		Short:         "runs the kubeflare manager (in cluster controller)",
 		Long:          `...`,
 		SilenceErrors: true,
 		SilenceUsage:  true,
@@ -29,7 +29,7 @@ func RunCmd() *cobra.Command {
 			viper.BindPFlags(cmd.Flags())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.Infof("Starting kubeflare version %+v", version.GetBuild())
+			logger.Infof("Starting kubeflare manager version %+v", version.GetBuild())
 
 			v := viper.GetViper()
 
