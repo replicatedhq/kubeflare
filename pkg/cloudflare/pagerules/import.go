@@ -24,7 +24,39 @@ func FetchPageRulesForZone(token string, zone string, zoneID string) ([]*v1alpha
 			Zone: zone,
 		}
 
-		// TODO parse actions
+		for _, action := range resource.Actions {
+			if action.ID == "forwarding_url" {
+				spec.Rule = &v1alpha1.Rule{
+					ForwardingURL: &v1alpha1.ForwardingURLPageRule{
+						RedirectURL: action.Value.(map[string]interface{})["url"].(string),
+						StatusCode:  int(action.Value.(map[string]interface{})["status_code"].(float64)),
+					},
+				}
+			} else if action.ID == "always_use_https" {
+				spec.Rule = &v1alpha1.Rule{
+					AlwaysUseHTTPS: &v1alpha1.AlwaysUseHTTPSPageRule{},
+				}
+			}
+		}
+
+		if spec.Rule == nil {
+			// we don't support this type of rule yet
+			// prob should do something like add it
+			continue
+		}
+
+		if resource.Status == "enabled" {
+			spec.Rule.Enabled = true
+		}
+
+		spec.Rule.Priority = &resource.Priority
+
+		for _, target := range resource.Targets {
+			if target.Target == "url" {
+				// this is a poor and partial implementation todo
+				spec.Rule.RequestURL = target.Constraint.Value
+			}
+		}
 
 		pageRule := v1alpha1.PageRule{
 			TypeMeta: metav1.TypeMeta{
