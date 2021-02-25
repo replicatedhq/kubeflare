@@ -1,4 +1,4 @@
-package managercli
+package kubeflarecli
 
 import (
 	"fmt"
@@ -11,11 +11,11 @@ import (
 func Version() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "version",
-		Short:         "manager version information",
+		Short:         "kubeflare version information",
 		Long:          `...`,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("Kubeflare Manager %s\n", version.Version())
+			fmt.Printf("Kubeflare %s\n", version.Version())
 			return nil
 		},
 	}

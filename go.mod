@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/aws/aws-sdk-go-v2 v0.23.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudflare/cloudflare-go v0.13.2
+	github.com/cloudflare/cloudflare-go v0.13.8
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
@@ -17,7 +17,8 @@ require (
 	github.com/r3labs/diff v1.1.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
+	github.com/urfave/cli v1.22.4 // indirect
 	github.com/xo/dburl v0.0.0-20200124232849-e9ec94f52bc3
 	go.uber.org/zap v1.10.0
 	gopkg.in/yaml.v2 v2.2.8

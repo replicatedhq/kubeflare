@@ -31,7 +31,7 @@ endef
 export GO111MODULE=on
 # export GOPROXY=https://proxy.golang.org
 
-all: generate fmt vet manifests manager
+all: generate fmt vet manifests kubeflare
 
 .PHONY: clean-and-tidy
 clean-and-tidy:
@@ -54,20 +54,20 @@ integration-bin: generate fmt vet manifests
 test: generate fmt vet manifests
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
 
-.PHONY: manager
-manager: generate fmt vet bin/manager
+.PHONY: kubeflare
+kubeflare: generate fmt vet bin/kubeflare 
 
-.PHONY: bin/manager
-bin/manager:
+.PHONY: bin/kubeflare
+bin/kubeflare:
 	go build \
 		${LDFLAGS} \
 		-i \
-		-o bin/manager \
-		./cmd/manager
+		-o bin/kubeflare \
+		./cmd/kubeflare
 
 .PHONY: run
-run: generate fmt vet bin/manager
-	./bin/manager run \
+run: generate fmt vet bin/kubeflare
+	./bin/kubeflare run \
 	--log-level debug 
 
 .PHONY: install
@@ -111,7 +111,7 @@ generate: controller-gen client-gen
 		-h ./hack/boilerplate.go.txt
 
 .PHONY: dev
-dev: manager
+dev: kubeflare
 	docker build -t kubeflare/kubeflare-manager -f ./Dockerfile.manager .
 	docker tag kubeflare/kubeflare-manager localhost:32000/kubeflare/kubeflare-manager:latest
 	docker push localhost:32000/kubeflare/kubeflare-manager:latest

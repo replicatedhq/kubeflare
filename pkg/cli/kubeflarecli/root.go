@@ -1,4 +1,4 @@
-package managercli
+package kubeflarecli
 
 import (
 	"fmt"
@@ -36,7 +36,8 @@ func RootCmd() *cobra.Command {
 	cmd.PersistentFlags().String("log-level", "info", "set the log level")
 
 	cmd.AddCommand(Version())
-	cmd.AddCommand(RunCmd())
+	cmd.AddCommand(ManagerCmd())
+	cmd.AddCommand(ImportCmd())
 
 	viper.BindPFlags(cmd.Flags())
 
