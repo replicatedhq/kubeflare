@@ -14,6 +14,7 @@ New to Kubeflare?
 This is where you want to get started.
 
 - Installation: Install Kubeflare via [kubectl](/install/kubectl) or [Helm](/install/helm).
+- Importing: Learn how to automatically [import your existing Cloudflare zones](/getting-started/importing)
 
 ## Getting Help
 

@@ -1,9 +1,12 @@
 site_name: Kubeflare Docs
 theme:
   name: material
-
+markdown_extensions:
+  - admonition
 nav:
-  - Home: 'index.md'
+  - Getting Started: 
+      - 'Introduction': 'index.md'
+      - 'Importing': 'getting-started/importing.md'
   - Installing:
       - 'Install with kubectl': 'install/kubectl.md'
       - 'Install with Helm': 'install/helm.md'
