@@ -6,6 +6,7 @@ markdown_extensions:
 nav:
   - Getting Started: 
       - 'Introduction': 'index.md'
+      - 'Cloudflare API Support': 'getting-started/api-support.md'
       - 'Importing': 'getting-started/importing.md'
   - Installing:
       - 'Install with kubectl': 'install/kubectl.md'
