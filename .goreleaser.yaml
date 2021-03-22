@@ -18,7 +18,7 @@ builds:
       -X github.com/replicatedhq/kubeflare/pkg/version.buildTime={{.Date}}
       -extldflags "-static"
     flags: -tags netgo -installsuffix netgo
-    binary: manager
+    binary: kubeflare
     hooks: {}
 archives:
   - id: kubeflare
