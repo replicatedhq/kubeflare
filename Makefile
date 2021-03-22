@@ -4,6 +4,7 @@ VERSION ?=`git describe --tags`
 DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 VERSION_PACKAGE = github.com/replicatedhq/kubeflare/pkg/version
 GIT_TREE = $(shell git rev-parse --is-inside-work-tree 2>/dev/null)
+IMAGE_TAG ?= dev
 ifneq "$(GIT_TREE)" ""
 define GIT_UPDATE_INDEX_CMD
 git update-index --assume-unchanged
@@ -115,6 +116,10 @@ dev: kubeflare
 	docker build -t kubeflare/kubeflare-manager -f ./Dockerfile.manager .
 	docker tag kubeflare/kubeflare-manager localhost:32000/kubeflare/kubeflare-manager:latest
 	docker push localhost:32000/kubeflare/kubeflare-manager:latest
+
+.PHONY: image
+image: kubeflare
+	docker build -t kubeflare/kubeflare-manager:$(IMAGE_TAG) -f ./Dockerfile.manager .
 
 .PHONY: contoller-gen
 controller-gen:

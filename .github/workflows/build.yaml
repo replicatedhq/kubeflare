@@ -1,0 +1,24 @@
+name: build
+on: 
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  build-docker:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    if: github.head_ref != ''
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Docker image
+        run: |
+          make image
