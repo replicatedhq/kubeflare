@@ -19,6 +19,5 @@ jobs:
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist
-          workdir: ./deploy/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
