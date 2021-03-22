@@ -19,7 +19,7 @@ jobs:
         uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_PASS }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
