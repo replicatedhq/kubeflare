@@ -4,14 +4,14 @@ release:
     owner: replicatedhq
     name: kubeflare
 builds:
-  - id: manager
+  - id: kubeflare
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-    main: cmd/manager/main.go
+    main: cmd/kubeflare/main.go
     ldflags: -s -w
       -X github.com/replicatedhq/kubeflare/pkg/version.version={{.Version}}
       -X github.com/replicatedhq/kubeflare/pkg/version.gitSHA={{.Commit}}
