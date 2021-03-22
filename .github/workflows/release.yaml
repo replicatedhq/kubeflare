@@ -15,13 +15,9 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.14
-      - name: Set output
-        id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          version: ${{ steps.vars.outputs.tag }}
           args: release --rm-dist
           workdir: ./deploy/
         env:
