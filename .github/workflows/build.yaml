@@ -11,7 +11,6 @@ jobs:
   build-docker:
     name: Build Docker image
     runs-on: ubuntu-latest
-    if: github.head_ref != ''
     steps:
       - name: Set up Go
         uses: actions/setup-go@v1
