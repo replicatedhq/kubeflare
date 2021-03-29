@@ -4,21 +4,21 @@ release:
     owner: replicatedhq
     name: kubeflare
 builds:
-  - id: manager
+  - id: kubeflare
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-    main: cmd/manager/main.go
+    main: cmd/kubeflare/main.go
     ldflags: -s -w
       -X github.com/replicatedhq/kubeflare/pkg/version.version={{.Version}}
       -X github.com/replicatedhq/kubeflare/pkg/version.gitSHA={{.Commit}}
       -X github.com/replicatedhq/kubeflare/pkg/version.buildTime={{.Date}}
       -extldflags "-static"
     flags: -tags netgo -installsuffix netgo
-    binary: manager
+    binary: kubeflare
     hooks: {}
 archives:
   - id: kubeflare
@@ -38,6 +38,6 @@ archives:
 dockers:
   - dockerfile: ./deploy/Dockerfile.manager
     image_templates:
-      - "replicatedhq/kubeflare-manager:{{.Version}}"
+      - "replicated/kubeflare-manager:{{.Version}}"
     binaries:
       - manager
