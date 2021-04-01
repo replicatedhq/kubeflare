@@ -49,6 +49,13 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 				found = true
 				isChanged := false
 
+				if desiredRule.PackageID != "" {
+					if desiredRule.PackageID != existingRule.PackageID {
+						isChanged = true
+						existingRule.PackageID = desiredRule.PackageID
+					}
+				}
+
 				if desiredRule.Mode != existingRule.Mode {
 					isChanged = true
 					existingRule.Mode = desiredRule.Mode
