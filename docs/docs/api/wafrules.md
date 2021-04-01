@@ -21,7 +21,7 @@ The following attributes are supported in the `rule` or `rules` object:
 |------|------|-------------|
 | id | string | The WAF rule ID
 | mode | string | The WAF rule mode
-| package | string | The WAF rule package (optional)
+| packageid | string | The WAF rule package (optional)
 
 ## Examples
 
