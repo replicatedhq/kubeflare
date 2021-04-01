@@ -44,6 +44,10 @@ func (c *FakeCrdsV1alpha1) PageRules(namespace string) v1alpha1.PageRuleInterfac
 	return &FakePageRules{c, namespace}
 }
 
+func (c *FakeCrdsV1alpha1) WebApplicationFirewallRules(namespace string) v1alpha1.WebApplicationFirewallRuleInterface {
+	return &FakeWebApplicationFirewallRules{c, namespace}
+}
+
 func (c *FakeCrdsV1alpha1) Zones(namespace string) v1alpha1.ZoneInterface {
 	return &FakeZones{c, namespace}
 }

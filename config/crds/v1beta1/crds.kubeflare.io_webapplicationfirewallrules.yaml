@@ -6,18 +6,19 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
-  name: apitokens.crds.kubeflare.io
+  name: webapplicationfirewallrules.crds.kubeflare.io
 spec:
   group: crds.kubeflare.io
   names:
-    kind: APIToken
-    listKind: APITokenList
-    plural: apitokens
-    singular: apitoken
+    kind: WebApplicationFirewallRule
+    listKind: WebApplicationFirewallRuleList
+    plural: webapplicationfirewallrules
+    singular: webapplicationfirewallrule
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      description: APIToken is the Schema for the APITokens API
+      description: WebApplicationFirewallRule is the Schema for the webapplicationfirewallrules
+        API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -32,40 +33,43 @@ spec:
         metadata:
           type: object
         spec:
-          description: APITokenSpec defines the desired state of APIToken
+          description: WebApplicationFirewallRuleSpec defines the desired state of
+            WebApplicationFirewallRule
           properties:
-            email:
-              type: string
-            name:
-              type: string
-            value:
-              type: string
-            valueFrom:
+            rule:
               properties:
-                secretKeyRef:
-                  description: SecretKeySelector selects a key of a Secret.
-                  properties:
-                    key:
-                      description: The key of the secret to select from.  Must be
-                        a valid secret key.
-                      type: string
-                    name:
-                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                        TODO: Add other useful fields. apiVersion, kind, uid?'
-                      type: string
-                    optional:
-                      description: Specify whether the Secret or its key must be defined
-                      type: boolean
-                  required:
-                  - key
-                  type: object
+                id:
+                  type: string
+                mode:
+                  type: string
+                packageid:
+                  type: string
+              required:
+              - id
+              - mode
               type: object
+            rules:
+              items:
+                properties:
+                  id:
+                    type: string
+                  mode:
+                    type: string
+                  packageid:
+                    type: string
+                required:
+                - id
+                - mode
+                type: object
+              type: array
+            zone:
+              type: string
           required:
-          - email
-          - name
+          - zone
           type: object
         status:
-          description: APITokenStatus defines the observed state of APIToken
+          description: WebApplicationFirewallRuleStatus defines the observed state
+            of WebApplicationFirewallRule
           type: object
       type: object
   version: v1alpha1

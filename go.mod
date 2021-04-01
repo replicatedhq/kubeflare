@@ -21,6 +21,7 @@ require (
 	github.com/urfave/cli v1.22.4 // indirect
 	github.com/xo/dburl v0.0.0-20200124232849-e9ec94f52bc3
 	go.uber.org/zap v1.10.0
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
 	gopkg.in/yaml.v2 v2.2.8
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.18.0
