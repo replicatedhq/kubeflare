@@ -1,7 +1,7 @@
 # WAF Rule
 
 A `kind: WebApplicationFirewallRule` resource will manage one or more WAF rules in a managed [zone](../zone).
-Each resource can contain a single WAF rule when specified under `spec.rule` vs `spec.rules`.
+Each resource can contain one or more WAF rules when specified under `spec.rules`.
 
 ## Attributes
 
@@ -15,7 +15,7 @@ The API token to manage the WAF rule(s) will be read from the associated Zone ki
 
 For more information on this type, see the [Cloudflare documentation](https://api.cloudflare.com/#waf-rules-edit-rule).
 
-The following attributes are supported in the `rule` or `rules` object:
+The following attributes are supported in the `rules` object:
 
 | Name | Type | Description |
 |------|------|-------------|
@@ -36,9 +36,9 @@ metadata:
   name: php-100001
 spec:
   zone: domainname.io
-  rule:
-    id: "PHP100001"
-    mode: "simulate"
+  rules:
+    - id: "PHP100001"
+      mode: "simulate"
 ```
 
 ### Multiple WAF Rules

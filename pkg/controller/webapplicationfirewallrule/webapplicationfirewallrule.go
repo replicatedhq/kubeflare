@@ -33,9 +33,6 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 	}
 
 	desiredRules := []*crdsv1alpha1.WAFRule{}
-	if instance.Spec.Rule != nil {
-		desiredRules = append(desiredRules, instance.Spec.Rule)
-	}
 	if instance.Spec.Rules != nil {
 		desiredRules = append(desiredRules, instance.Spec.Rules...)
 	}

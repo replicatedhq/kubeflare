@@ -29,7 +29,6 @@ type WAFRule struct {
 // WebApplicationFirewallRuleSpec defines the desired state of WebApplicationFirewallRule
 type WebApplicationFirewallRuleSpec struct {
 	Zone  string     `json:"zone"`
-	Rule  *WAFRule   `json:"rule,omitempty"`
 	Rules []*WAFRule `json:"rules,omitempty"`
 }
 
