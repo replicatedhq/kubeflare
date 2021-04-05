@@ -63,9 +63,6 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 				}
 			}
 		}
-		if !found {
-			// TODO
-		}
 	}
 
 	for _, ruleToUpdate := range rulesToUpdate {
