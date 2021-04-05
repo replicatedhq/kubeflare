@@ -6,6 +6,7 @@ import (
 	"github.com/replicatedhq/kubeflare/pkg/apis"
 	accessapplicationcontroller "github.com/replicatedhq/kubeflare/pkg/controller/accessapplication"
 	dnsrecordcontroller "github.com/replicatedhq/kubeflare/pkg/controller/dnsrecord"
+	wafrulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/webapplicationfirewallrule"
 	zonecontroller "github.com/replicatedhq/kubeflare/pkg/controller/zone"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"github.com/replicatedhq/kubeflare/pkg/version"
@@ -73,6 +74,11 @@ func ManagerCmd() *cobra.Command {
 			}
 
 			if err := accessapplicationcontroller.Add(mgr); err != nil {
+				logger.Error(err)
+				os.Exit(1)
+			}
+
+			if err := wafrulecontroller.Add(mgr); err != nil {
 				logger.Error(err)
 				os.Exit(1)
 			}

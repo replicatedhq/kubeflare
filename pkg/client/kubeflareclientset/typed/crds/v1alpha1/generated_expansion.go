@@ -26,4 +26,6 @@ type DNSRecordExpansion interface{}
 
 type PageRuleExpansion interface{}
 
+type WebApplicationFirewallRuleExpansion interface{}
+
 type ZoneExpansion interface{}

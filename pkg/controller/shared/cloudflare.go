@@ -37,7 +37,7 @@ func GetCloudflareAPI(ctx context.Context, namespace string, apiTokenName string
 		zap.String("email", apiToken.Spec.Email),
 		zap.Int("tokenLength", len(tokenValue)))
 
-	api, err := cloudflare.New(tokenValue, apiToken.Spec.Email)
+	api, err := cloudflare.NewWithAPIToken(tokenValue)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create cloudflare api instance")
 	}

@@ -30,6 +30,7 @@ type CrdsV1alpha1Interface interface {
 	AccessApplicationsGetter
 	DNSRecordsGetter
 	PageRulesGetter
+	WebApplicationFirewallRulesGetter
 	ZonesGetter
 }
 
@@ -52,6 +53,10 @@ func (c *CrdsV1alpha1Client) DNSRecords(namespace string) DNSRecordInterface {
 
 func (c *CrdsV1alpha1Client) PageRules(namespace string) PageRuleInterface {
 	return newPageRules(c, namespace)
+}
+
+func (c *CrdsV1alpha1Client) WebApplicationFirewallRules(namespace string) WebApplicationFirewallRuleInterface {
+	return newWebApplicationFirewallRules(c, namespace)
 }
 
 func (c *CrdsV1alpha1Client) Zones(namespace string) ZoneInterface {
