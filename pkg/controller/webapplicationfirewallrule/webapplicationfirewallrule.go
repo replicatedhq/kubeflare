@@ -40,10 +40,8 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 	rulesToUpdate := []cloudflare.WAFRule{}
 
 	for _, existingRule := range existingRules {
-		found := false
 		for _, desiredRule := range desiredRules {
 			if desiredRule.ID == existingRule.ID {
-				found = true
 				isChanged := false
 
 				if desiredRule.PackageID != "" {
