@@ -44,5 +44,6 @@ The full list of optional types to exclude is in the table below:
 | Flag | Record Type(s) 
 |------|---------------
 | `--dns-records` | All DNS Records
+| `--page-rules` | All PageRules
 
 
