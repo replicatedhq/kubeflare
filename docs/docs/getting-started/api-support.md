@@ -10,7 +10,8 @@ Feel free to open an [issue](https://github.com/replicatedhq/kubeflare/issues/ne
 
 | Cloudflare API | Status | Kubeflare Version |
 |----------------|--------|-------------------|
-| Zone Settings | Completed | 0.0.1 |
-| DNS Records | Completed | 0.0.1 |
-| PageRules | In Prgress | 0.0.2 |
-| Access Applications | In Progress | 0.0.2 |
+| Zone Settings | Completed | 0.1.0 |
+| DNS Records | Completed | 0.1.0 |
+| PageRules | In Prgress | 0.1.0 |
+| Access Applications | In Progress | 0.1.0 |
+| Web Application Firewall | In Progress | 0.1.0 |
