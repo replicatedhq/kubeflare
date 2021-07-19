@@ -8,6 +8,10 @@ After installing the Kubeflare Operator to your Kubernetes cluster, some new cus
 
 This project was created at [Replicated](https://www.replicated.com) to manage Cloudflare settings using our GitOps workflow. We wanted a way for a devleoper to commit their DNS records and other Cloudflare settings to be reviewed and deployed with their code, as a single deployment. This tightly couples the infrastructure changes with the application changes, and makes deploying new services easier and more transparant.
 
+## Installation
+
+Full instruction and all installation methods are listed in the [documentation](https://kubeflare.com).
+
 ## Examples
 
 Below is an example of a Kubernetes manifest that we deploy for a domain (with some information redacted):
