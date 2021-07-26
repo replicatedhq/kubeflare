@@ -110,5 +110,3 @@ Kubeflare uses boolean objects (true, false) and will map those to the string ty
 | websockets | [websockets](https://api.cloudflare.com/#zone-settings-change-websockets-setting) | boolean
 | imageResizing | [image_resizing](https://api.cloudflare.com/#zone-settings-change-image-resizing-setting) | boolean
 | http2Prioritization | [h2_prioritization](https://api.cloudflare.com/#zone-settings-change-http/2-edge-prioritization-setting) | boolean
-
-
