@@ -39,6 +39,8 @@ func ManagerCmd() *cobra.Command {
 				logger.SetDebug()
 			}
 
+			logger.Infof("poll interval set to: %s", v.GetString("poll-interval"))
+
 			// Get a config to talk to the apiserver
 			cfg, err := config.GetConfig()
 			if err != nil {
@@ -99,7 +101,7 @@ func ManagerCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
-	cmd.Flags().Duration("poll-interval", 300, "Duration in seconds to poll Cloudflare for changes to watched resources. Set to 0 to disable.")
+	cmd.Flags().String("poll-interval", "5m", "Interval to poll Cloudflare for changes to watched resources. Set to 0 to disable.")
 
 	return cmd
 }

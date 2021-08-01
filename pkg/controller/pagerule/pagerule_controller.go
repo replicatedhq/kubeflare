@@ -46,7 +46,7 @@ func Add(mgr manager.Manager) error {
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 	v := viper.GetViper()
 
-	pollInterval := v.GetDuration("poll-interval") * time.Second
+	pollInterval, _ := time.ParseDuration(v.GetString("poll-interval"))
 
 	return &ReconcilePageRule{
 		Client:       mgr.GetClient(),
