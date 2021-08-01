@@ -6,7 +6,13 @@ To install the current version of Kubeflare:
 
 ```shell
 git clone git@github.com:replicatedhq/kubeflare.git
+```
+
+```shell
 kubectl apply -f kubeflare/config/crds/v1
+```
+
+```shell
 cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
@@ -65,7 +71,7 @@ spec:
       serviceAccountName: kubeflare
       containers:
       - name: kubeflare
-        image: replicated/kubeflare-manager:0.2.0
+        image: replicated/kubeflare-manager:0.3.0
         imagePullPolicy: IfNotPresent
         args:
         - --metrics-addr=":8088"
