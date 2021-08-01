@@ -99,6 +99,7 @@ func ManagerCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
+	cmd.Flags().Duration("poll-interval", 300, "Duration in seconds to poll Cloudflare for changes to watched resources. Set to 0 to disable.")
 
 	return cmd
 }

@@ -3,7 +3,7 @@ package dnsrecord
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
@@ -77,6 +77,21 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 		}
 	}
 
+	for _, recordToUpdate := range recordsToUpdate {
+		rr := cloudflare.DNSRecord{
+			Type:    recordToUpdate.Type,
+			Name:    recordToUpdate.Name,
+			Content: recordToUpdate.Content,
+			TTL:     recordToUpdate.TTL,
+			Proxied: recordToUpdate.Proxied,
+		}
+
+		err := cf.UpdateDNSRecord(zoneID, recordToUpdate.ID, rr)
+		if err != nil {
+			return errors.Wrap(err, "failed to update dns record")
+		}
+	}
+
 	for _, desiredRecord := range desiredRecords {
 		found := false
 		for _, existingRecord := range existingRecords {
@@ -116,21 +131,6 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 
 		if !response.Success {
 			return errors.New("non success when creating dns record")
-		}
-	}
-
-	for _, recordToUpdate := range recordsToUpdate {
-		rr := cloudflare.DNSRecord{
-			Type:    recordToUpdate.Type,
-			Name:    recordToUpdate.Name,
-			Content: recordToUpdate.Content,
-			TTL:     recordToUpdate.TTL,
-			Proxied: recordToUpdate.Proxied,
-		}
-
-		err := cf.UpdateDNSRecord(zoneID, recordToUpdate.ID, rr)
-		if err != nil {
-			return errors.Wrap(err, "failed to update dns record")
 		}
 	}
 

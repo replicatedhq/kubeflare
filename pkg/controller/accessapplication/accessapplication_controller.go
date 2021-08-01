@@ -24,6 +24,7 @@ import (
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/controller/shared"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
+	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeinformers "k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -43,9 +44,14 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
+	v := viper.GetViper()
+
+	pollInterval := v.GetDuration("poll-interval") * time.Second
+
 	return &ReconcileAccessApplication{
-		Client: mgr.GetClient(),
-		scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		scheme:       mgr.GetScheme(),
+		pollInterval: pollInterval,
 	}
 }
 
@@ -84,7 +90,8 @@ var _ reconcile.Reconciler = &ReconcileAccessApplication{}
 // ReconcileAccessApplication reconciles a AccessApplication object
 type ReconcileAccessApplication struct {
 	client.Client
-	scheme *runtime.Scheme
+	scheme       *runtime.Scheme
+	pollInterval time.Duration
 }
 
 // Reconcile reads that state of the cluster for a ReconcileAccessApplication object and makes changes based on the state read
@@ -138,5 +145,5 @@ func (r *ReconcileAccessApplication) Reconcile(request reconcile.Request) (recon
 		return reconcile.Result{}, err
 	}
 
-	return reconcile.Result{}, nil
+	return reconcile.Result{RequeueAfter: r.pollInterval}, nil
 }

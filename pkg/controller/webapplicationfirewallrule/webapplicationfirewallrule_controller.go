@@ -23,6 +23,7 @@ import (
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/controller/shared"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
+	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeinformers "k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -45,7 +46,15 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileWebApplicationFirewallRule{Client: mgr.GetClient(), scheme: mgr.GetScheme()}
+	v := viper.GetViper()
+
+	pollInterval := v.GetDuration("poll-interval") * time.Second
+
+	return &ReconcileWebApplicationFirewallRule{
+		Client:       mgr.GetClient(),
+		scheme:       mgr.GetScheme(),
+		pollInterval: pollInterval,
+	}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -81,7 +90,8 @@ var _ reconcile.Reconciler = &ReconcileWebApplicationFirewallRule{}
 // ReconcileWebApplicationFirewallRule reconciles a WebApplicationFirewallRule object
 type ReconcileWebApplicationFirewallRule struct {
 	client.Client
-	scheme *runtime.Scheme
+	scheme       *runtime.Scheme
+	pollInterval time.Duration
 }
 
 // Reconcile reads that state of the cluster for a WebApplicationFirewallRule object and makes changes based on the state read
@@ -116,5 +126,5 @@ func (r *ReconcileWebApplicationFirewallRule) Reconcile(request reconcile.Reques
 		return reconcile.Result{}, err
 	}
 
-	return reconcile.Result{}, nil
+	return reconcile.Result{RequeueAfter: r.pollInterval}, nil
 }
