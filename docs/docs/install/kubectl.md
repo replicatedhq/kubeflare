@@ -67,6 +67,9 @@ spec:
       - name: kubeflare
         image: replicated/kubeflare-manager:0.2.0
         imagePullPolicy: IfNotPresent
+        args:
+        - --metrics-addr=":8088"
+        - --poll-interval="5m"
 EOF
 ```
 
