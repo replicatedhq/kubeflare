@@ -37,6 +37,12 @@ func Error(err error) {
 	sugar.Error(err)
 }
 
+func Warn(msg string, fields ...zap.Field) {
+	defer log.Sync()
+	sugar := log.Sugar()
+	sugar.Warn(msg, fields)
+}
+
 func Info(msg string, fields ...zap.Field) {
 	defer log.Sync()
 	sugar := log.Sugar()
