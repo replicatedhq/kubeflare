@@ -29,7 +29,7 @@ func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance crdsv1a
 	rule := cloudflare.PageRule{}
 
 	if instance.Spec.Rule.Enabled {
-		rule.Status = "enabled"
+		rule.Status = "active"
 	} else {
 		rule.Status = "disabled"
 	}
