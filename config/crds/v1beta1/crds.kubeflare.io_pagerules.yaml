@@ -78,10 +78,15 @@ spec:
           - zone
           type: object
         status:
-          description: PageRuleStatus defines the observed state of PageRule
+          description: PageRuleStatus defines the observed state of PageRule We are
+            storing the requested priority hre because the priority is different on
+            cloudflare side and hence we cannot depend on the one from its API to
+            detect changes to the spec
           properties:
             id:
               type: string
+            priority:
+              type: integer
           type: object
       type: object
   version: v1alpha1
