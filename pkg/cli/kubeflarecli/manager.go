@@ -50,6 +50,8 @@ func ManagerCmd() *cobra.Command {
 			// Create a new Cmd to provide shared dependencies and start components
 			options := manager.Options{
 				MetricsBindAddress: v.GetString("metrics-addr"),
+				LeaderElection:     true,
+				LeaderElectionID:   "leaderelection.kubeflare.io",
 			}
 
 			mgr, err := manager.New(cfg, options)
