@@ -85,7 +85,7 @@ spec:
           properties:
             id:
               type: string
-            priority:
+            lastAppliedPriority:
               type: integer
           type: object
       type: object

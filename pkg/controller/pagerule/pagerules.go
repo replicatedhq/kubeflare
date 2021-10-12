@@ -90,7 +90,7 @@ func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance *crdsv1
 
 	instance.Status.ID = created.ID
 	// We therefore store the user provided priority in the status and use that to check for differences later
-	instance.Status.Priority = pageRule.Priority
+	instance.Status.LastAppliedPriority = pageRule.Priority
 	if err != nil {
 		return errors.Wrap(err, "failed to compute page rule checksum")
 	}
@@ -112,7 +112,7 @@ func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1al
 	ruleK8s := r.mapCRDToCF(instance)
 
 	// Use the priority value set on the status as the "previous" value
-	ruleCF.Priority = instance.Status.Priority
+	ruleCF.Priority = instance.Status.LastAppliedPriority
 
 	if r.pageRulesAreEqual(ruleCF, ruleK8s) {
 		return nil
@@ -124,7 +124,7 @@ func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1al
 
 	// The priority might change because cloudflare removes gaps from priorities
 	// We therefore store the user provided priority in the status and use that to check for differences later
-	instance.Status.Priority = ruleK8s.Priority
+	instance.Status.LastAppliedPriority = ruleK8s.Priority
 	if err := r.Status().Update(ctx, instance); err != nil {
 		return errors.Wrap(err, "failed to update status")
 	}

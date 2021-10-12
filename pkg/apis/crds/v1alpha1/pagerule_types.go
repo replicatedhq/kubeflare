@@ -55,8 +55,8 @@ type PageRuleSpec struct {
 // We are storing the requested priority here because the priority is different on cloudflare side
 // and hence we cannot depend on the one from its API to detect changes to the spec
 type PageRuleStatus struct {
-	ID       string `json:"id,omitempty"`
-	Priority int    `json:"priority,omitempty"`
+	ID                  string `json:"id,omitempty"`
+	LastAppliedPriority int    `json:"lastAppliedPriority,omitempty"`
 }
 
 // +genclient
