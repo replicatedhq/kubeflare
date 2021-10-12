@@ -1,16 +1,15 @@
 # Zone
 
-A `kind: Zone` resource should be created per domain name that's managed in Cloudflare.
-Here you can specify the API Token and any Zone settings.
+A `kind: Zone` resource should be created per domain name that's managed in Cloudflare. Here you can specify the API
+Token and any Zone settings.
 
-A `kind: Zone` resource is required in order to configure any additional api types on a Cloudflare domain.
-Each domain managed by Kubeflare should have exactly 1 resource of this type deployed to the cluster.
+A `kind: Zone` resource is required in order to configure any additional api types on a Cloudflare domain. Each domain
+managed by Kubeflare should have exactly 1 resource of this type deployed to the cluster.
 
 All keys under `settings` default to the same default values as documented in the Cloudflare API.
 
-If the `settings` key is not included in the manifest, no settings will be changed in the Cloudflare zone.
-If the `settings` key is specified, only keys that are specified will be applied to the Cloudflare zone.
-
+If the `settings` key is not included in the manifest, no settings will be changed in the Cloudflare zone. If
+the `settings` key is specified, only keys that are specified will be applied to the Cloudflare zone.
 
 ```yaml
 apiVersion: crds.kubeflare.io/v1alpha1
@@ -18,11 +17,7 @@ kind: Zone
 metadata:
   name: domainname.io
 spec:
-  apiToken: 
-    valueFrom:
-      secretKeyRef:
-        name: my-secret
-        key: cloudflare-token
+  apiToken: api-token-name
   settings:
     alwaysUseHttps: true
     alwaysOnline: true
@@ -32,42 +27,20 @@ spec:
 
 ## `apiToken`
 
-Each zone should have an API Token specified. 
-This value can be written inline (not recommended) or referenced from a Kubernetes secret.
-
-### Examples
-
-#### Inline
-
-```yaml
-spec:
-  apiToken: 
-    value: value
-```
-
-#### Kubernetes Secret
-
-```yaml
-spec:
-  apiToken:
-    valueFrom:
-      secretKeyRef: 
-        name: secret-name
-        key: key-in-secret
-```
+Each zone should have an API Token specified. The value of this field should be the name of a `kind: APIToken` resource.
 
 ## `settings`
 
-All [Cloudflare Zone Settings](https://api.cloudflare.com/#zone-settings-properties) can be specified in the `settings` key of this resource.
-Kubeflare uses a lowerCamelCase standard to specify all fields in the Cloudflare Zone.
+All [Cloudflare Zone Settings](https://api.cloudflare.com/#zone-settings-properties) can be specified in the `settings`
+key of this resource. Kubeflare uses a lowerCamelCase standard to specify all fields in the Cloudflare Zone.
 
-Note that the Cloudflare API and docs use string types with values of "off" and "on" for boolean settings.
-Kubeflare uses boolean objects (true, false) and will map those to the string types accepted by Cloudflare.
+Note that the Cloudflare API and docs use string types with values of "off" and "on" for boolean settings. Kubeflare
+uses boolean objects (true, false) and will map those to the string types accepted by Cloudflare.
 
 | Kubeflare Setting | Cloudflare Setting | Data Type |
 |-------------------|--------------------|-----------|
 | advancedDDOS | advanced_ddos | boolean
-| alwaysOnline | [always_online](https://api.cloudflare.com/#zone-settings-change-always-online-setting) | boolean 
+| alwaysOnline | [always_online](https://api.cloudflare.com/#zone-settings-change-always-online-setting) | boolean
 | alwaysUseHttps | [always_use_https](https://api.cloudflare.com/#zone-settings-change-always-use-https-setting) | boolean
 | opportunisticOnion | [opportunistic_onion](https://api.cloudflare.com/#zone-settings-change-opportunistic-onion-setting) | boolean
 | automaticHTTPSRewrites | [automatic_https_rewrites](https://api.cloudflare.com/#zone-settings-change-automatic-https-rewrites-setting) | boolean
@@ -81,7 +54,7 @@ Kubeflare uses boolean objects (true, false) and will map those to the string ty
 | ipGeolocation | [ip_geoloation](https://api.cloudflare.com/#zone-settings-change-ip-geolocation-setting) | boolean
 | ipv6 | [ipv6](https://api.cloudflare.com/#zone-settings-change-ipv6-setting)| boolean
 | minify | [minify](https://api.cloudflare.com/#zone-settings-change-minify-setting) |
-| mobileRedirect | [mobile_redirect](https://api.cloudflare.com/#zone-settings-change-mobile-redirect-setting) | 
+| mobileRedirect | [mobile_redirect](https://api.cloudflare.com/#zone-settings-change-mobile-redirect-setting) |
 | mirage | [mirage](https://api.cloudflare.com/#zone-settings-change-mirage-setting) | boolean
 | originErrorPagePassThru | [origin_error_page_pass_thru](https://api.cloudflare.com/#zone-settings-change-enable-error-pages-on-setting) | boolean
 | opportunisticEncryption | [opportunistic_encryption](https://api.cloudflare.com/#zone-settings-change-opportunistic-encryption-setting) | boolean
