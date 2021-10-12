@@ -6,6 +6,7 @@ import (
 	"github.com/replicatedhq/kubeflare/pkg/apis"
 	accessapplicationcontroller "github.com/replicatedhq/kubeflare/pkg/controller/accessapplication"
 	dnsrecordcontroller "github.com/replicatedhq/kubeflare/pkg/controller/dnsrecord"
+	pagerulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/pagerule"
 	wafrulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/webapplicationfirewallrule"
 	zonecontroller "github.com/replicatedhq/kubeflare/pkg/controller/zone"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
@@ -49,6 +50,8 @@ func ManagerCmd() *cobra.Command {
 			// Create a new Cmd to provide shared dependencies and start components
 			options := manager.Options{
 				MetricsBindAddress: v.GetString("metrics-addr"),
+				LeaderElection:     true,
+				LeaderElectionID:   "leaderelection.kubeflare.io",
 			}
 
 			mgr, err := manager.New(cfg, options)
@@ -69,6 +72,11 @@ func ManagerCmd() *cobra.Command {
 			}
 
 			if err := dnsrecordcontroller.Add(mgr); err != nil {
+				logger.Error(err)
+				os.Exit(1)
+			}
+
+			if err := pagerulecontroller.Add(mgr); err != nil {
 				logger.Error(err)
 				os.Exit(1)
 			}
