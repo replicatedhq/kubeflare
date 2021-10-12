@@ -18,8 +18,9 @@ func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crd
 	logger.Debug("reconcilePageRules for zone")
 
 	containsFinalizer := controllerutil.ContainsFinalizer(&instance, internal.DeleteCFResourceFinalizer)
+	isBeingDeleted := !instance.DeletionTimestamp.IsZero()
 
-	if instance.DeletionTimestamp != nil && !containsFinalizer {
+	if isBeingDeleted && !containsFinalizer {
 		// object is being deleted and finalizer already executed. nothing more to do
 		return nil
 	}
@@ -29,7 +30,7 @@ func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crd
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	if instance.DeletionTimestamp != nil && containsFinalizer {
+	if isBeingDeleted && containsFinalizer {
 		// object is being deleted execute finalizer
 		return r.finalize(ctx, &instance, zoneID, cf)
 	}
@@ -56,7 +57,7 @@ func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crd
 		justCreated = true
 	}
 
-	if instance.DeletionTimestamp == nil && !containsFinalizer {
+	if !isBeingDeleted && !containsFinalizer {
 		patch := client.MergeFrom(instance.DeepCopy())
 		controllerutil.AddFinalizer(&instance, internal.DeleteCFResourceFinalizer)
 
@@ -132,8 +133,23 @@ func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1al
 	return nil
 }
 
+func (r *ReconcilePageRule) deletePageRule(instance *crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
+	err := cf.DeletePageRule(zoneID, instance.Status.ID)
+	if err == nil {
+		return nil
+	}
+
+	if strings.Contains(err.Error(), "Invalid Page Rule identifier") {
+		// page rule no longer exist
+		logger.Debug("page rule already deleted from cloudflare", zap.String("zone", instance.Spec.Zone), zap.String("id", instance.Status.ID), zap.String("requestUrl", instance.Spec.Rule.RequestURL))
+		return nil
+	}
+
+	return err
+}
+
 func (r *ReconcilePageRule) finalize(ctx context.Context, instance *crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
-	if err := cf.DeletePageRule(zoneID, instance.Status.ID); err != nil {
+	if err := r.deletePageRule(instance, zoneID, cf); err != nil {
 		return errors.Wrap(err, "failed to delete page rule")
 	}
 
