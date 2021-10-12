@@ -52,7 +52,7 @@ type PageRuleSpec struct {
 }
 
 // PageRuleStatus defines the observed state of PageRule
-// We are storing the requested priority hre because the priority is different on cloudflare side
+// We are storing the requested priority here because the priority is different on cloudflare side
 // and hence we cannot depend on the one from its API to detect changes to the spec
 type PageRuleStatus struct {
 	ID       string `json:"id,omitempty"`
