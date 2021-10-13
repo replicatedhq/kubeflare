@@ -45,6 +45,7 @@ const (
 )
 
 type CacheLevelPageRule struct {
+	// +kubebuilder:validation:Enum=bypass;basic;simplified;aggressive;cache_everything
 	Level CacheLevel `json:"level"`
 }
 

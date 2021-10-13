@@ -56,6 +56,12 @@ spec:
                   cacheLevel:
                     properties:
                       level:
+                        enum:
+                        - bypass
+                        - basic
+                        - simplified
+                        - aggressive
+                        - cache_everything
                         type: string
                     required:
                     - level
