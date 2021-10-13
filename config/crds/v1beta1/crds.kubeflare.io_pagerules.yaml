@@ -53,6 +53,13 @@ spec:
                   - html
                   - js
                   type: object
+                cacheLevel:
+                  properties:
+                    level:
+                      type: string
+                  required:
+                  - level
+                  type: object
                 enabled:
                   type: boolean
                 forwardingUrl:

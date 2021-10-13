@@ -210,6 +210,15 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		}
 	}
 
+	if instance.Spec.Rule.CacheLevel != nil {
+		rule.Actions = []cloudflare.PageRuleAction{
+			{
+				ID:    "cache_level",
+				Value: instance.Spec.Rule.CacheLevel.Level,
+			},
+		}
+	}
+
 	return rule
 }
 

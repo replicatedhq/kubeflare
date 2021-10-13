@@ -34,12 +34,27 @@ type ForwardingURLPageRule struct {
 	RedirectURL string `json:"redirectUrl"`
 }
 
+type CacheLevel string
+
+const (
+	BypassCacheLevel          CacheLevel = "bypass"
+	BasicCacheLevel           CacheLevel = "basic"
+	SimplifiedCacheLevel      CacheLevel = "simplified"
+	AggressiveCacheLevel      CacheLevel = "aggressive"
+	CacheEverythingCacheLevel CacheLevel = "cache_everything"
+)
+
+type CacheLevelPageRule struct {
+	Level CacheLevel `json:"level"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
 	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
 	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
 	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
+	CacheLevel     *CacheLevelPageRule     `json:"cacheLevel,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
