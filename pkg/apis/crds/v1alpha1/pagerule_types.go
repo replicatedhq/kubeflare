@@ -34,12 +34,19 @@ type ForwardingURLPageRule struct {
 	RedirectURL string `json:"redirectUrl"`
 }
 
+type EdgeCacheTTLPageRule struct {
+	// +kubebuilder:validation:Minimum=1
+	// +kubebuilder:validation:Maximum=31536000
+	Value int `json:"value"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
 	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
 	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
 	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
+	EdgeCacheTTL   *EdgeCacheTTLPageRule   `json:"edgeCacheTTL,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
