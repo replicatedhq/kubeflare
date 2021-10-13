@@ -3,6 +3,8 @@ package pagerule
 import (
 	"context"
 	"encoding/json"
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
@@ -11,7 +13,6 @@ import (
 	"go.uber.org/zap"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"strings"
 )
 
 func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crdsv1alpha1.PageRule, zone *crdsv1alpha1.Zone, cf *cloudflare.API) error {
@@ -190,6 +191,23 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		},
 	}
 
+	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
+		rule.Actions = []cloudflare.PageRuleAction{
+			{
+				ID: "always_use_https",
+			},
+		}
+	}
+
+	if instance.Spec.Rule.EdgeCacheTTL != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "edge_cache_ttl",
+			Value: instance.Spec.Rule.EdgeCacheTTL.Value,
+		})
+	}
+
+	// overwrite everything else. because cloudflare does not allow the forwarding_url action with any other action.
+	// We'll add some validations for these later
 	if instance.Spec.Rule.ForwardingURL != nil {
 		rule.Actions = []cloudflare.PageRuleAction{
 			{
@@ -198,14 +216,6 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 					"url":         instance.Spec.Rule.ForwardingURL.RedirectURL,
 					"status_code": instance.Spec.Rule.ForwardingURL.StatusCode,
 				},
-			},
-		}
-	}
-
-	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
-		rule.Actions = []cloudflare.PageRuleAction{
-			{
-				ID: "always_use_https",
 			},
 		}
 	}
