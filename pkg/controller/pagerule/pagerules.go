@@ -220,7 +220,7 @@ func (r *ReconcilePageRule) ruleActionValuesAreEqual(action1, action2 interface{
 		return false
 	}
 
-	data2, err := json.Marshal(action1)
+	data2, err := json.Marshal(action2)
 	if err != nil {
 		logger.Error(err)
 		return false
