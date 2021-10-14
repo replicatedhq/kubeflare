@@ -65,6 +65,7 @@ spec:
                       type: string
                   required:
                   - level
+                  type: object
                 edgeCacheTTL:
                   properties:
                     value:

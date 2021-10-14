@@ -681,7 +681,7 @@ func (in *Rule) DeepCopyInto(out *Rule) {
 		in, out := &in.CacheLevel, &out.CacheLevel
 		*out = new(CacheLevelPageRule)
 		**out = **in
-  }
+	}
 	if in.EdgeCacheTTL != nil {
 		in, out := &in.EdgeCacheTTL, &out.EdgeCacheTTL
 		*out = new(EdgeCacheTTLPageRule)
