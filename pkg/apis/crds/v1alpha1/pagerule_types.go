@@ -34,6 +34,21 @@ type ForwardingURLPageRule struct {
 	RedirectURL string `json:"redirectUrl"`
 }
 
+type CacheLevel string
+
+const (
+	BypassCacheLevel          CacheLevel = "bypass"
+	BasicCacheLevel           CacheLevel = "basic"
+	SimplifiedCacheLevel      CacheLevel = "simplified"
+	AggressiveCacheLevel      CacheLevel = "aggressive"
+	CacheEverythingCacheLevel CacheLevel = "cache_everything"
+)
+
+type CacheLevelPageRule struct {
+	// +kubebuilder:validation:Enum=bypass;basic;simplified;aggressive;cache_everything
+	Level CacheLevel `json:"level"`
+}
+
 type EdgeCacheTTLPageRule struct {
 	// +kubebuilder:validation:Minimum=1
 	// +kubebuilder:validation:Maximum=31536000
@@ -46,6 +61,7 @@ type Rule struct {
 	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
 	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
 	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
+	CacheLevel     *CacheLevelPageRule     `json:"cacheLevel,omitempty"`
 	EdgeCacheTTL   *EdgeCacheTTLPageRule   `json:"edgeCacheTTL,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`

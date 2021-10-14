@@ -53,6 +53,19 @@ spec:
                     - html
                     - js
                     type: object
+                  cacheLevel:
+                    properties:
+                      level:
+                        enum:
+                        - bypass
+                        - basic
+                        - simplified
+                        - aggressive
+                        - cache_everything
+                        type: string
+                    required:
+                    - level
+                    type: object
                   edgeCacheTTL:
                     properties:
                       value:
