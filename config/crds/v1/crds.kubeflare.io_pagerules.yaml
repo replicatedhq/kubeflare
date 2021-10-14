@@ -65,6 +65,14 @@ spec:
                         type: string
                     required:
                     - level
+                  edgeCacheTTL:
+                    properties:
+                      value:
+                        maximum: 31536000
+                        minimum: 1
+                        type: integer
+                    required:
+                    - value
                     type: object
                   enabled:
                     type: boolean

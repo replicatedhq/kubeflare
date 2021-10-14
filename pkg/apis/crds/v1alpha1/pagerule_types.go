@@ -49,6 +49,12 @@ type CacheLevelPageRule struct {
 	Level CacheLevel `json:"level"`
 }
 
+type EdgeCacheTTLPageRule struct {
+	// +kubebuilder:validation:Minimum=1
+	// +kubebuilder:validation:Maximum=31536000
+	Value int `json:"value"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
@@ -56,6 +62,7 @@ type Rule struct {
 	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
 	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
 	CacheLevel     *CacheLevelPageRule     `json:"cacheLevel,omitempty"`
+	EdgeCacheTTL   *EdgeCacheTTLPageRule   `json:"edgeCacheTTL,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
