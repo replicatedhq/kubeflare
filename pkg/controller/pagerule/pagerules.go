@@ -191,12 +191,11 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		},
 	}
 
-	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
-		rule.Actions = []cloudflare.PageRuleAction{
-			{
-				ID: "always_use_https",
-			},
-		}
+	if instance.Spec.Rule.CacheLevel != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "cache_level",
+			Value: instance.Spec.Rule.CacheLevel.Level,
+		})
 	}
 
 	if instance.Spec.Rule.EdgeCacheTTL != nil {
@@ -206,7 +205,44 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		})
 	}
 
-	// overwrite everything else. because cloudflare does not allow the forwarding_url action with any other action.
+	if instance.Spec.Rule.CacheKeyFields != nil {
+		valueOrEmpty := func(ar []string) []string {
+			if ar == nil {
+				return []string{}
+			}
+
+			return ar
+		}
+
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID: "cache_key_fields",
+			Value: map[string]interface{}{
+				"cookie": map[string][]string{
+					"check_presence": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Cookie.CheckPresence),
+					"include":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Cookie.Include),
+				},
+				"header": map[string][]string{
+					"check_presence": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.CheckPresence),
+					"include":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.Include),
+					"exclude":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.Exclude),
+				},
+				"host": map[string]bool{
+					"resolved": instance.Spec.Rule.CacheKeyFields.Host.Resolved,
+				},
+				"query_string": map[string][]string{
+					"include": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.QueryString.Include),
+					"exclude": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.QueryString.Exclude),
+				},
+				"user": map[string]bool{
+					"device_type": instance.Spec.Rule.CacheKeyFields.User.DeviceType,
+					"geo":         instance.Spec.Rule.CacheKeyFields.User.Geo,
+					"lang":        instance.Spec.Rule.CacheKeyFields.User.Lang,
+				},
+			},
+		})
+	}
+
+	// overwrite everything else because cloudflare does not allow the forwarding_url action with any other action.
 	// We'll add some validations for these later
 	if instance.Spec.Rule.ForwardingURL != nil {
 		rule.Actions = []cloudflare.PageRuleAction{
@@ -220,11 +256,11 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		}
 	}
 
-	if instance.Spec.Rule.CacheLevel != nil {
+	// overwrite everything else because cloudflare does not allow the always_use_https action with any other action.
+	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
 		rule.Actions = []cloudflare.PageRuleAction{
 			{
-				ID:    "cache_level",
-				Value: instance.Spec.Rule.CacheLevel.Level,
+				ID: "always_use_https",
 			},
 		}
 	}
