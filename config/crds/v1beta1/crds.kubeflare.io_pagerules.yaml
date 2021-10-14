@@ -53,6 +53,62 @@ spec:
                   - html
                   - js
                   type: object
+                cacheKeyFields:
+                  properties:
+                    cookie:
+                      properties:
+                        checkPresence:
+                          items:
+                            type: string
+                          type: array
+                        include:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    header:
+                      properties:
+                        checkPresence:
+                          items:
+                            type: string
+                          type: array
+                        exclude:
+                          items:
+                            type: string
+                          type: array
+                        include:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    host:
+                      properties:
+                        resolved:
+                          type: boolean
+                      required:
+                      - resolved
+                      type: object
+                    queryString:
+                      properties:
+                        exclude:
+                          items:
+                            type: string
+                          type: array
+                        include:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    user:
+                      properties:
+                        deviceType:
+                          type: boolean
+                        geo:
+                          type: boolean
+                        lang:
+                          type: boolean
+                      type: object
+                  type: object
                 cacheLevel:
                   properties:
                     level:

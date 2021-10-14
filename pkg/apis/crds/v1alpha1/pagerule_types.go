@@ -55,6 +55,40 @@ type EdgeCacheTTLPageRule struct {
 	Value int `json:"value"`
 }
 
+type CacheKeyCookieField struct {
+	CheckPresence []string `json:"checkPresence,omitempty"`
+	Include       []string `json:"include,omitempty"`
+}
+
+type CacheKeyHeaderField struct {
+	CheckPresence []string `json:"checkPresence,omitempty"`
+	Include       []string `json:"include,omitempty"`
+	Exclude       []string `json:"exclude,omitempty"`
+}
+
+type CacheKeyHostField struct {
+	Resolved bool `json:"resolved"`
+}
+
+type CacheKeyQueryStringField struct {
+	Include []string `json:"include,omitempty"`
+	Exclude []string `json:"exclude,omitempty"`
+}
+
+type CacheKeyUserField struct {
+	DeviceType bool `json:"deviceType,omitempty"`
+	Geo        bool `json:"geo,omitempty"`
+	Lang       bool `json:"lang,omitempty"`
+}
+
+type CacheKeyFields struct {
+	Cookie      CacheKeyCookieField      `json:"cookie,omitempty"`
+	Header      CacheKeyHeaderField      `json:"header,omitempty"`
+	Host        CacheKeyHostField        `json:"host,omitempty"`
+	QueryString CacheKeyQueryStringField `json:"queryString,omitempty"`
+	User        CacheKeyUserField        `json:"user,omitempty"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
@@ -63,6 +97,7 @@ type Rule struct {
 	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
 	CacheLevel     *CacheLevelPageRule     `json:"cacheLevel,omitempty"`
 	EdgeCacheTTL   *EdgeCacheTTLPageRule   `json:"edgeCacheTTL,omitempty"`
+	CacheKeyFields *CacheKeyFields         `json:"cacheKeyFields,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
