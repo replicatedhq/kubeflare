@@ -133,6 +133,16 @@ spec:
                     type: object
                   enabled:
                     type: boolean
+                  explicitCacheControl:
+                    properties:
+                      value:
+                        enum:
+                        - "on"
+                        - "off"
+                        type: string
+                    required:
+                    - value
+                    type: object
                   forwardingUrl:
                     properties:
                       redirectUrl:
@@ -147,6 +157,16 @@ spec:
                     type: integer
                   requestUrl:
                     type: string
+                  sortQueryStrings:
+                    properties:
+                      value:
+                        enum:
+                        - "on"
+                        - "off"
+                        type: string
+                    required:
+                    - value
+                    type: object
                 required:
                 - requestUrl
                 type: object
