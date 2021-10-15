@@ -242,6 +242,20 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		})
 	}
 
+	if instance.Spec.Rule.ExplicitCacheControl != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "explicit_cache_control",
+			Value: instance.Spec.Rule.ExplicitCacheControl.Value,
+		})
+	}
+
+	if instance.Spec.Rule.SortQueryStrings != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "sort_query_string_for_cache",
+			Value: instance.Spec.Rule.SortQueryStrings.Value,
+		})
+	}
+
 	// overwrite everything else because cloudflare does not allow the forwarding_url action with any other action.
 	// We'll add some validations for these later
 	if instance.Spec.Rule.ForwardingURL != nil {

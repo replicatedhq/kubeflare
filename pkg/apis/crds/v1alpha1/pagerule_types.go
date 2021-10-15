@@ -35,6 +35,7 @@ type ForwardingURLPageRule struct {
 }
 
 type CacheLevel string
+type Toggle string
 
 const (
 	BypassCacheLevel          CacheLevel = "bypass"
@@ -42,6 +43,8 @@ const (
 	SimplifiedCacheLevel      CacheLevel = "simplified"
 	AggressiveCacheLevel      CacheLevel = "aggressive"
 	CacheEverythingCacheLevel CacheLevel = "cache_everything"
+	OnToggle                  Toggle     = "on"
+	OffToggle                 Toggle     = "off"
 )
 
 type CacheLevelPageRule struct {
@@ -89,15 +92,27 @@ type CacheKeyFields struct {
 	User        CacheKeyUserField        `json:"user,omitempty"`
 }
 
+type ExplicitCacheControlPageRule struct {
+	// +kubebuilder:validation:Enum=on;off
+	Value Toggle `json:"value"`
+}
+
+type SortQueryStringsPageRule struct {
+	// +kubebuilder:validation:Enum=on;off
+	Value Toggle `json:"value"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
-	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
-	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
-	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
-	CacheLevel     *CacheLevelPageRule     `json:"cacheLevel,omitempty"`
-	EdgeCacheTTL   *EdgeCacheTTLPageRule   `json:"edgeCacheTTL,omitempty"`
-	CacheKeyFields *CacheKeyFields         `json:"cacheKeyFields,omitempty"`
+	ForwardingURL        *ForwardingURLPageRule        `json:"forwardingUrl,omitempty"`
+	AlwaysUseHTTPS       *AlwaysUseHTTPSPageRule       `json:"alwaysUseHttps,omitempty"`
+	AutoMinify           *AutoMinifyPageRule           `json:"autoMinify,omitempty"`
+	CacheLevel           *CacheLevelPageRule           `json:"cacheLevel,omitempty"`
+	EdgeCacheTTL         *EdgeCacheTTLPageRule         `json:"edgeCacheTTL,omitempty"`
+	CacheKeyFields       *CacheKeyFields               `json:"cacheKeyFields,omitempty"`
+	ExplicitCacheControl *ExplicitCacheControlPageRule `json:"explicitCacheControl,omitempty"`
+	SortQueryStrings     *SortQueryStringsPageRule     `json:"sortQueryStrings,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
