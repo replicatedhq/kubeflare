@@ -74,6 +74,7 @@ type CacheKeyHostField struct {
 }
 
 type CacheKeyQueryStringField struct {
+	Ignore  bool     `json:"ignore,omitempty"`
 	Include []string `json:"include,omitempty"`
 	Exclude []string `json:"exclude,omitempty"`
 }

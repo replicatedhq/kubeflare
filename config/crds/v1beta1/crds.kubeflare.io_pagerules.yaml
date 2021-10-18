@@ -94,6 +94,8 @@ spec:
                           items:
                             type: string
                           type: array
+                        ignore:
+                          type: boolean
                         include:
                           items:
                             type: string

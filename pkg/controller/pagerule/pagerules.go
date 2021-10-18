@@ -3,6 +3,7 @@ package pagerule
 import (
 	"context"
 	"encoding/json"
+	"sort"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -206,33 +207,64 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 	}
 
 	if instance.Spec.Rule.CacheKeyFields != nil {
-		valueOrEmpty := func(ar []string) []string {
-			if ar == nil {
-				return []string{}
+		prepareArray := func(ar []string) []string {
+			res := make([]string, len(ar))
+			copy(res, ar)
+			sort.Strings(res)
+			return res
+		}
+
+		getQueryStringMap := func(field crdsv1alpha1.CacheKeyQueryStringField) map[string]interface{} {
+			if field.Ignore {
+				return map[string]interface{}{
+					"include": []string{},
+					"exclude": "*",
+				}
 			}
 
-			return ar
+			if len(field.Include) == 0 && len(field.Exclude) == 0 {
+				return map[string]interface{}{
+					"include": "*",
+					"exclude": []string{},
+				}
+			}
+
+			if len(field.Include) == 1 && field.Include[0] == "*" {
+				return map[string]interface{}{
+					"include": "*",
+					"exclude": []string{},
+				}
+			}
+
+			if len(field.Exclude) == 1 && field.Exclude[0] == "*" {
+				return map[string]interface{}{
+					"include": []string{},
+					"exclude": "*",
+				}
+			}
+
+			return map[string]interface{}{
+				"include": prepareArray(field.Include),
+				"exclude": prepareArray(field.Exclude),
+			}
 		}
 
 		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
 			ID: "cache_key_fields",
 			Value: map[string]interface{}{
 				"cookie": map[string][]string{
-					"check_presence": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Cookie.CheckPresence),
-					"include":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Cookie.Include),
+					"check_presence": prepareArray(instance.Spec.Rule.CacheKeyFields.Cookie.CheckPresence),
+					"include":        prepareArray(instance.Spec.Rule.CacheKeyFields.Cookie.Include),
 				},
 				"header": map[string][]string{
-					"check_presence": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.CheckPresence),
-					"include":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.Include),
-					"exclude":        valueOrEmpty(instance.Spec.Rule.CacheKeyFields.Header.Exclude),
+					"check_presence": prepareArray(instance.Spec.Rule.CacheKeyFields.Header.CheckPresence),
+					"include":        prepareArray(instance.Spec.Rule.CacheKeyFields.Header.Include),
+					"exclude":        prepareArray(instance.Spec.Rule.CacheKeyFields.Header.Exclude),
 				},
 				"host": map[string]bool{
 					"resolved": instance.Spec.Rule.CacheKeyFields.Host.Resolved,
 				},
-				"query_string": map[string][]string{
-					"include": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.QueryString.Include),
-					"exclude": valueOrEmpty(instance.Spec.Rule.CacheKeyFields.QueryString.Exclude),
-				},
+				"query_string": getQueryStringMap(instance.Spec.Rule.CacheKeyFields.QueryString),
 				"user": map[string]bool{
 					"device_type": instance.Spec.Rule.CacheKeyFields.User.DeviceType,
 					"geo":         instance.Spec.Rule.CacheKeyFields.User.Geo,
