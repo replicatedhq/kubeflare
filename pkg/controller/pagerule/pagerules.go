@@ -229,6 +229,20 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 				}
 			}
 
+			if len(field.Include) == 1 && field.Include[0] == "*" {
+				return map[string]interface{}{
+					"include": "*",
+					"exclude": []string{},
+				}
+			}
+
+			if len(field.Exclude) == 1 && field.Exclude[0] == "*" {
+				return map[string]interface{}{
+					"include": []string{},
+					"exclude": "*",
+				}
+			}
+
 			return map[string]interface{}{
 				"include": prepareArray(field.Include),
 				"exclude": prepareArray(field.Exclude),
