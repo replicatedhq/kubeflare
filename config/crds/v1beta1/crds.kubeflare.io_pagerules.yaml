@@ -124,6 +124,13 @@ spec:
                   required:
                   - level
                   type: object
+                cacheOnCookie:
+                  properties:
+                    value:
+                      type: string
+                  required:
+                  - value
+                  type: object
                 edgeCacheTTL:
                   properties:
                     value:

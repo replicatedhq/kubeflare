@@ -103,6 +103,10 @@ type SortQueryStringsPageRule struct {
 	Value Toggle `json:"value"`
 }
 
+type CacheOnCookiePageRule struct {
+	Value string `json:"value"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
@@ -114,6 +118,7 @@ type Rule struct {
 	CacheKeyFields       *CacheKeyFields               `json:"cacheKeyFields,omitempty"`
 	ExplicitCacheControl *ExplicitCacheControlPageRule `json:"explicitCacheControl,omitempty"`
 	SortQueryStrings     *SortQueryStringsPageRule     `json:"sortQueryStrings,omitempty"`
+	CacheOnCookie        *CacheOnCookiePageRule        `json:"cacheOnCookie,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
