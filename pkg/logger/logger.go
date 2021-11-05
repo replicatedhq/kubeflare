@@ -31,16 +31,19 @@ func SetDebug() {
 	atom.SetLevel(zapcore.DebugLevel)
 }
 
-func Error(err error) {
+func Error(err error, fields ...zap.Field) {
 	defer log.Sync()
-	sugar := log.Sugar()
-	sugar.Error(err)
+	log.Error(err.Error(), fields...)
+}
+
+func Warn(msg string, fields ...zap.Field) {
+	defer log.Sync()
+	log.Warn(msg, fields...)
 }
 
 func Info(msg string, fields ...zap.Field) {
 	defer log.Sync()
-	sugar := log.Sugar()
-	sugar.Info(msg, fields)
+	log.Info(msg, fields...)
 }
 
 func Infof(template string, args ...interface{}) {
@@ -51,8 +54,7 @@ func Infof(template string, args ...interface{}) {
 
 func Debug(msg string, fields ...zap.Field) {
 	defer log.Sync()
-	sugar := log.Sugar()
-	sugar.Debug(msg, fields)
+	log.Debug(msg, fields...)
 }
 
 func Debugf(template string, args ...interface{}) {

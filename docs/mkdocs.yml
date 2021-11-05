@@ -4,7 +4,7 @@ theme:
 markdown_extensions:
   - admonition
 nav:
-  - Getting Started: 
+  - Getting Started:
       - 'Introduction': 'index.md'
       - 'Cloudflare API Support': 'getting-started/api-support.md'
       - 'Importing': 'getting-started/importing.md'
@@ -12,6 +12,7 @@ nav:
       - 'Install with kubectl': 'install/kubectl.md'
       - 'Install with Helm': 'install/helm.md'
   - API:
+      - 'APIToken': 'api/apitoken.md'
       - 'Zone': 'api/zone.md'
       - 'DNSRecord': 'api/dnsrecord.md'
       - 'PageRules': 'api/pagerules.md'

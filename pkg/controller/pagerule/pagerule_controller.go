@@ -18,12 +18,14 @@ package pagerule
 
 import (
 	"context"
+	"go.uber.org/zap"
 	"time"
 
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/controller/shared"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
+	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	kubeinformers "k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -98,6 +100,11 @@ func (r *ReconcilePageRule) Reconcile(request reconcile.Request) (reconcile.Resu
 	instance := crdsv1alpha1.PageRule{}
 	err := r.Get(ctx, request.NamespacedName, &instance)
 	if err != nil {
+		if apiErrors.IsNotFound(err) {
+			logger.Debug("page rule already deleted", zap.String("name", request.Name))
+			return reconcile.Result{}, nil
+		}
+
 		logger.Error(err)
 		return reconcile.Result{}, err
 	}
