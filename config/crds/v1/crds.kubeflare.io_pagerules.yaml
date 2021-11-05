@@ -166,6 +166,19 @@ spec:
                     type: integer
                   requestUrl:
                     type: string
+                  securityLevel:
+                    properties:
+                      level:
+                        enum:
+                        - essentially_off
+                        - low
+                        - medium
+                        - high
+                        - under_attack
+                        type: string
+                    required:
+                    - level
+                    type: object
                   sortQueryStrings:
                     properties:
                       value:
