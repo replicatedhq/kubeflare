@@ -295,6 +295,13 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 		})
 	}
 
+	if instance.Spec.Rule.SecurityLevel != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "security_level",
+			Value: instance.Spec.Rule.SecurityLevel.Level,
+		})
+	}
+
 	// overwrite everything else because cloudflare does not allow the forwarding_url action with any other action.
 	// We'll add some validations for these later
 	if instance.Spec.Rule.ForwardingURL != nil {
@@ -351,7 +358,7 @@ func (r *ReconcilePageRule) pageRulesAreEqual(rule1, rule2 cloudflare.PageRule) 
 	numActions := len(rule1.Actions)
 	numActions2 := len(rule2.Actions)
 	if numActions != numActions2 {
-		logger.Debug("page rule actions are not in sync", zap.Int("rule1NumberOfActions", numActions), zap.Int("rule1NumberOfActions", numActions2))
+		logger.Debug("page rule actions are not in sync", zap.Int("rule1NumberOfActions", numActions), zap.Int("rule2NumberOfActions", numActions2))
 		return false
 	}
 

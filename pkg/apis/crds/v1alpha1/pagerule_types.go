@@ -36,15 +36,21 @@ type ForwardingURLPageRule struct {
 
 type CacheLevel string
 type Toggle string
+type SecurityLevel string
 
 const (
-	BypassCacheLevel          CacheLevel = "bypass"
-	BasicCacheLevel           CacheLevel = "basic"
-	SimplifiedCacheLevel      CacheLevel = "simplified"
-	AggressiveCacheLevel      CacheLevel = "aggressive"
-	CacheEverythingCacheLevel CacheLevel = "cache_everything"
-	OnToggle                  Toggle     = "on"
-	OffToggle                 Toggle     = "off"
+	BypassCacheLevel            CacheLevel    = "bypass"
+	BasicCacheLevel             CacheLevel    = "basic"
+	SimplifiedCacheLevel        CacheLevel    = "simplified"
+	AggressiveCacheLevel        CacheLevel    = "aggressive"
+	CacheEverythingCacheLevel   CacheLevel    = "cache_everything"
+	OnToggle                    Toggle        = "on"
+	OffToggle                   Toggle        = "off"
+	EssentiallyOffSecurityLevel SecurityLevel = "essentially_off"
+	LowSecurityLevel            SecurityLevel = "low"
+	MediumSecurityLevel         SecurityLevel = "medium"
+	HighSecurityLevel           SecurityLevel = "high"
+	UnderAttackSecurityLevel    SecurityLevel = "under_attack"
 )
 
 type CacheLevelPageRule struct {
@@ -107,6 +113,11 @@ type CacheOnCookiePageRule struct {
 	Value string `json:"value"`
 }
 
+type SecurityLevelPageRule struct {
+	// +kubebuilder:validation:Enum=essentially_off;low;medium;high;under_attack
+	Level SecurityLevel `json:"level"`
+}
+
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
@@ -119,6 +130,7 @@ type Rule struct {
 	ExplicitCacheControl *ExplicitCacheControlPageRule `json:"explicitCacheControl,omitempty"`
 	SortQueryStrings     *SortQueryStringsPageRule     `json:"sortQueryStrings,omitempty"`
 	CacheOnCookie        *CacheOnCookiePageRule        `json:"cacheOnCookie,omitempty"`
+	SecurityLevel        *SecurityLevelPageRule        `json:"securityLevel,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`
