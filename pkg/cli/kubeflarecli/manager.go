@@ -8,6 +8,7 @@ import (
 	dnsrecordcontroller "github.com/replicatedhq/kubeflare/pkg/controller/dnsrecord"
 	pagerulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/pagerule"
 	wafrulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/webapplicationfirewallrule"
+	workerroutecontroller "github.com/replicatedhq/kubeflare/pkg/controller/workerroute"
 	zonecontroller "github.com/replicatedhq/kubeflare/pkg/controller/zone"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"github.com/replicatedhq/kubeflare/pkg/version"
@@ -50,7 +51,7 @@ func ManagerCmd() *cobra.Command {
 			// Create a new Cmd to provide shared dependencies and start components
 			options := manager.Options{
 				MetricsBindAddress: v.GetString("metrics-addr"),
-				LeaderElection:     true,
+				LeaderElection:     v.GetBool("leader-elect"),
 				LeaderElectionID:   "leaderelection.kubeflare.io",
 			}
 
@@ -91,6 +92,11 @@ func ManagerCmd() *cobra.Command {
 				os.Exit(1)
 			}
 
+			if err := workerroutecontroller.Add(mgr); err != nil {
+				logger.Error(err)
+				os.Exit(1)
+			}
+
 			if err := webhook.AddToManager(mgr); err != nil {
 				logger.Error(err)
 				os.Exit(1)
@@ -107,6 +113,8 @@ func ManagerCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
+	cmd.Flags().Bool("leader-elect", false, "Enable leader election for controller manager. "+
+		"Enabling this will ensure there is only one active controller manager.")
 
 	return cmd
 }
