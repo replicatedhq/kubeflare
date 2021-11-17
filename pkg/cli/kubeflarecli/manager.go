@@ -113,7 +113,7 @@ func ManagerCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
-	cmd.Flags().Bool("leader-elect", false, "Enable leader election for controller manager. "+
+	cmd.Flags().Bool("leader-elect", true, "Enable leader election for controller manager. "+
 		"Enabling this will ensure there is only one active controller manager.")
 
 	return cmd
