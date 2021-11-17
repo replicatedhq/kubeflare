@@ -132,20 +132,20 @@ func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Contex
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	var workerRouteFinalizerKey = "crds.kubeflare.io/worker-route"
+	var finalizerKey = "crds.kubeflare.io/worker-route"
 	if instance.ObjectMeta.DeletionTimestamp.IsZero() {
-		if !containsString(instance.GetFinalizers(), workerRouteFinalizerKey) {
-			controllerutil.AddFinalizer(instance, workerRouteFinalizerKey)
+		if !shared.ContainsString(instance.GetFinalizers(), finalizerKey) {
+			controllerutil.AddFinalizer(instance, finalizerKey)
 			if err := r.Update(ctx, instance); err != nil {
 				return err
 			}
 		}
 	} else {
-		if containsString(instance.GetFinalizers(), workerRouteFinalizerKey) {
+		if shared.ContainsString(instance.GetFinalizers(), finalizerKey) {
 			if err := r.deleteWorkerRoute(ctx, instance, zoneID, cf); err != nil {
 				return err
 			}
-			controllerutil.RemoveFinalizer(instance, workerRouteFinalizerKey)
+			controllerutil.RemoveFinalizer(instance, finalizerKey)
 			if err := r.Update(ctx, instance); err != nil {
 				return err
 			}
@@ -191,7 +191,7 @@ func (r *WorkerRouteReconciler) updateWorkerRoute(ctx context.Context, instance 
 	}
 
 	route := mapCRDToCF(instance)
-	if equalWorkerRoutes(routeCF, route) {
+	if equals(routeCF, route) {
 		logger.Debug("worker route is in sync", zap.String("name", instance.Name))
 		return nil
 	}
@@ -268,15 +268,6 @@ func getWorkerRoute(cf *cloudflare.API, zoneID, ID string) (cloudflare.WorkerRou
 	return cloudflare.WorkerRoute{}, errors.Errorf("worker route not found: %s", ID)
 }
 
-func equalWorkerRoutes(w1, w2 cloudflare.WorkerRoute) bool {
+func equals(w1, w2 cloudflare.WorkerRoute) bool {
 	return w1.Pattern == w2.Pattern && w1.Script == w2.Script
-}
-
-func containsString(slice []string, s string) bool {
-	for _, item := range slice {
-		if item == s {
-			return true
-		}
-	}
-	return false
 }
