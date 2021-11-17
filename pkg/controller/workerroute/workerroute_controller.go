@@ -213,6 +213,9 @@ func (r *WorkerRouteReconciler) updateWorkerRoute(ctx context.Context, instance 
 }
 
 func (r *WorkerRouteReconciler) deleteWorkerRoute(ctx context.Context, instance *crdsv1alpha1.WorkerRoute, zoneID string, cf *cloudflare.API) error {
+	if instance.Status.ID == "" {
+		return nil
+	}
 	deleted, err := cf.DeleteWorkerRoute(zoneID, instance.Status.ID)
 	if err != nil {
 		if err := r.updateStatusLastError(ctx, instance, err); err != nil {
@@ -243,6 +246,9 @@ func ignoreUnrecoverableErrors(err error) error {
 		return nil
 	}
 	if strings.Contains(err.Error(), "workers.api.error.invalid_route_script_missing") {
+		return nil
+	}
+	if strings.Contains(err.Error(), "Route pattern must include zone name") {
 		return nil
 	}
 	return err
