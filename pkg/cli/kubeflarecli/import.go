@@ -12,6 +12,7 @@ import (
 	kubeflarescheme "github.com/replicatedhq/kubeflare/pkg/client/kubeflareclientset/scheme"
 	"github.com/replicatedhq/kubeflare/pkg/cloudflare/dns"
 	"github.com/replicatedhq/kubeflare/pkg/cloudflare/pagerules"
+	"github.com/replicatedhq/kubeflare/pkg/cloudflare/workerroute"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -90,6 +91,26 @@ func ImportCmd() *cobra.Command {
 					}
 				}
 			}
+
+			if v.GetBool("worker-routes") {
+				workerRoutes, err := workerroute.FetchWorkerRoutesForZone(v.GetString("api-token"), v.GetString("zone"), zoneID)
+				if err != nil {
+					return errors.Wrap(err, "fetch dns records")
+				}
+
+				for _, workerRoute := range workerRoutes {
+					buf := bytes.NewBuffer(nil)
+					err := s.Encode(workerRoute, buf)
+					if err != nil {
+						return errors.Wrap(err, "encode")
+					}
+					outputFile := filepath.Join(v.GetString("output-dir"), fmt.Sprintf("%s.yaml", workerRoute.Name))
+					if err := ioutil.WriteFile(outputFile, buf.Bytes(), 0644); err != nil {
+						return errors.Wrap(err, "write file")
+					}
+				}
+			}
+
 			return nil
 		},
 	}
@@ -104,6 +125,7 @@ func ImportCmd() *cobra.Command {
 
 	cmd.Flags().Bool("dns-records", true, "when set, import existing dns records from the zone")
 	cmd.Flags().Bool("page-rules", true, "when set, import existing page rules from the zone")
+	cmd.Flags().Bool("worker-routes", true, "when set, import existing worker routes from the zone")
 
 	return cmd
 }

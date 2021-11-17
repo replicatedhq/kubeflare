@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 	crdsv1alpha1 "github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
 	"github.com/replicatedhq/kubeflare/pkg/controller/shared"
+	"github.com/replicatedhq/kubeflare/pkg/internal"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"go.uber.org/zap"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
@@ -116,7 +117,12 @@ func (r *WorkerRouteReconciler) Reconcile(request reconcile.Request) (reconcile.
 		return reconcile.Result{}, ignoreUnrecoverableErrors(err)
 	}
 
-	if err := r.ReconcileWorkerRouteInstances(ctx, &instance, zone, cf); err != nil {
+	zoneID, err := cf.ZoneIDByName(zone.Name)
+	if err != nil {
+		return reconcile.Result{}, errors.Wrap(err, "failed to get zone id")
+	}
+
+	if err := r.ReconcileWorkerRouteInstances(ctx, &instance, zoneID, cf); err != nil {
 		logger.Error(err)
 		return reconcile.Result{}, ignoreUnrecoverableErrors(err)
 	}
@@ -124,28 +130,22 @@ func (r *WorkerRouteReconciler) Reconcile(request reconcile.Request) (reconcile.
 	return reconcile.Result{}, nil
 }
 
-func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Context, instance *crdsv1alpha1.WorkerRoute, zone *crdsv1alpha1.Zone, cf *cloudflare.API) error {
+func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Context, instance *crdsv1alpha1.WorkerRoute, zoneID string, cf *cloudflare.API) error {
 	logger.Debug("reconcile worker route", zap.String("name", instance.Name))
 
-	zoneID, err := cf.ZoneIDByName(zone.Name)
-	if err != nil {
-		return errors.Wrap(err, "failed to get zone id")
-	}
-
-	var finalizerKey = "crds.kubeflare.io/worker-route"
 	if instance.ObjectMeta.DeletionTimestamp.IsZero() {
-		if !shared.ContainsString(instance.GetFinalizers(), finalizerKey) {
-			controllerutil.AddFinalizer(instance, finalizerKey)
+		if !shared.ContainsString(instance.GetFinalizers(), internal.DeleteCFResourceFinalizer) {
+			controllerutil.AddFinalizer(instance, internal.DeleteCFResourceFinalizer)
 			if err := r.Update(ctx, instance); err != nil {
 				return err
 			}
 		}
 	} else {
-		if shared.ContainsString(instance.GetFinalizers(), finalizerKey) {
+		if shared.ContainsString(instance.GetFinalizers(), internal.DeleteCFResourceFinalizer) {
 			if err := r.deleteWorkerRoute(ctx, instance, zoneID, cf); err != nil {
 				return err
 			}
-			controllerutil.RemoveFinalizer(instance, finalizerKey)
+			controllerutil.RemoveFinalizer(instance, internal.DeleteCFResourceFinalizer)
 			if err := r.Update(ctx, instance); err != nil {
 				return err
 			}
@@ -154,6 +154,17 @@ func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Contex
 	}
 
 	if instance.Status.ID == "" {
+		if importedID, ok := instance.Annotations[internal.ImportedIDAnnotation]; ok {
+			if _, err := getWorkerRoute(cf, zoneID, importedID); err == nil {
+				instance.Status.ID = importedID
+				if err := r.Status().Update(ctx, instance); err != nil {
+					return errors.Wrap(err, "failed to update status")
+				}
+				logger.Debug("imported worker route", zap.String("imported-id", importedID), zap.String("zone", instance.Spec.Zone), zap.String("pattern", instance.Spec.Pattern))
+				return nil
+			}
+			logger.Debug("worker route id not found, skip import", zap.String("imported-id", importedID))
+		}
 		return r.createWorkerRoute(ctx, instance, zoneID, cf)
 	}
 
@@ -218,6 +229,10 @@ func (r *WorkerRouteReconciler) deleteWorkerRoute(ctx context.Context, instance 
 	}
 	deleted, err := cf.DeleteWorkerRoute(zoneID, instance.Status.ID)
 	if err != nil {
+		if strings.Contains(err.Error(), "workers.api.error.route_not_found") {
+			logger.Debug("worker route was already deleted", zap.String("id", deleted.ID), zap.String("zone", instance.Spec.Zone), zap.String("pattern", instance.Spec.Pattern))
+			return nil
+		}
 		if err := r.updateStatusLastError(ctx, instance, err); err != nil {
 			return errors.Wrap(err, "failed to update status")
 		}
@@ -249,6 +264,9 @@ func ignoreUnrecoverableErrors(err error) error {
 		return nil
 	}
 	if strings.Contains(err.Error(), "Route pattern must include zone name") {
+		return nil
+	}
+	if strings.Contains(err.Error(), "workers.api.error.route_not_found") {
 		return nil
 	}
 	return err
