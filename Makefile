@@ -118,7 +118,7 @@ dev: kubeflare
 	docker push localhost:32000/kubeflare/kubeflare-manager:latest
 
 .PHONY: image
-image: clean-and-tidy kubeflare
+image: kubeflare
 	docker build -t kubeflare/kubeflare-manager:$(IMAGE_TAG) -f ./Dockerfile.manager .
 
 .PHONY: contoller-gen
