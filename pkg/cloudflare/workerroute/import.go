@@ -22,15 +22,14 @@ func FetchWorkerRoutesForZone(token string, zone string, zoneID string) ([]*v1al
 	}
 
 	workerRoutes := []*v1alpha1.WorkerRoute{}
-	var count int
-	for _, resource := range resources.Routes {
+	for i, resource := range resources.Routes {
 		workerRoute := v1alpha1.WorkerRoute{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "crds.kubeflare.io/v1alpha1",
 				Kind:       "WorkerRoute",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("workerroute-%d", count),
+				Name: fmt.Sprintf("workerroute-%d", i),
 				Annotations: map[string]string{
 					internal.ImportedIDAnnotation: resource.ID,
 				},
@@ -43,7 +42,6 @@ func FetchWorkerRoutesForZone(token string, zone string, zoneID string) ([]*v1al
 		}
 
 		workerRoutes = append(workerRoutes, &workerRoute)
-		count += 1
 	}
 
 	return workerRoutes, nil
