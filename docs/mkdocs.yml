@@ -17,3 +17,4 @@ nav:
       - 'DNSRecord': 'api/dnsrecord.md'
       - 'PageRules': 'api/pagerules.md'
       - 'WAFRules': 'api/wafrules.md'
+      - 'WorkerRoutes': 'api/workerroutes.md'
