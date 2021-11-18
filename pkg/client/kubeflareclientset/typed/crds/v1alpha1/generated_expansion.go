@@ -28,4 +28,6 @@ type PageRuleExpansion interface{}
 
 type WebApplicationFirewallRuleExpansion interface{}
 
+type WorkerRouteExpansion interface{}
+
 type ZoneExpansion interface{}

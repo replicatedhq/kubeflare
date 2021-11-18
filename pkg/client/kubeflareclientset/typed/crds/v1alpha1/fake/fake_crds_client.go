@@ -48,6 +48,10 @@ func (c *FakeCrdsV1alpha1) WebApplicationFirewallRules(namespace string) v1alpha
 	return &FakeWebApplicationFirewallRules{c, namespace}
 }
 
+func (c *FakeCrdsV1alpha1) WorkerRoutes(namespace string) v1alpha1.WorkerRouteInterface {
+	return &FakeWorkerRoutes{c, namespace}
+}
+
 func (c *FakeCrdsV1alpha1) Zones(namespace string) v1alpha1.ZoneInterface {
 	return &FakeZones{c, namespace}
 }
