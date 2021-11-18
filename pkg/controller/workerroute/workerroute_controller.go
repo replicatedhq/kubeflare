@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes authors.
+Copyright 2020 Replicated, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -134,14 +134,14 @@ func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Contex
 	logger.Debug("reconcile worker route", zap.String("name", instance.Name))
 
 	if instance.ObjectMeta.DeletionTimestamp.IsZero() {
-		if !shared.ContainsString(instance.GetFinalizers(), internal.DeleteCFResourceFinalizer) {
+		if !controllerutil.ContainsFinalizer(instance, internal.DeleteCFResourceFinalizer) {
 			controllerutil.AddFinalizer(instance, internal.DeleteCFResourceFinalizer)
 			if err := r.Update(ctx, instance); err != nil {
 				return err
 			}
 		}
 	} else {
-		if shared.ContainsString(instance.GetFinalizers(), internal.DeleteCFResourceFinalizer) {
+		if controllerutil.ContainsFinalizer(instance, internal.DeleteCFResourceFinalizer) {
 			if err := r.deleteWorkerRoute(ctx, instance, zoneID, cf); err != nil {
 				return err
 			}
