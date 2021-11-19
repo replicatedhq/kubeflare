@@ -56,7 +56,7 @@ test: generate fmt vet manifests
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
 
 .PHONY: kubeflare
-kubeflare: generate fmt vet bin/kubeflare 
+kubeflare: clean-and-tidy generate fmt vet bin/kubeflare 
 
 .PHONY: bin/kubeflare
 bin/kubeflare:
