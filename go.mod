@@ -1,6 +1,6 @@
 module github.com/replicatedhq/kubeflare
 
-go 1.17
+go 1.16
 
 require (
 	github.com/cloudflare/cloudflare-go v0.13.8
