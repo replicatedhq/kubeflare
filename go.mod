@@ -22,7 +22,8 @@ require (
 	cloud.google.com/go v0.81.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/beorn7/perks v1.0.0 // indirect
+	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
@@ -57,10 +58,10 @@ require (
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.0.0 // indirect
+	github.com/prometheus/client_golang v1.7.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.4.1 // indirect
-	github.com/prometheus/procfs v0.0.11 // indirect
+	github.com/prometheus/common v0.10.0 // indirect
+	github.com/prometheus/procfs v0.1.3 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
