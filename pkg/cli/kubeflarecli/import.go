@@ -95,7 +95,7 @@ func ImportCmd() *cobra.Command {
 			if v.GetBool("worker-routes") {
 				workerRoutes, err := workerroute.FetchWorkerRoutesForZone(v.GetString("api-token"), v.GetString("zone"), zoneID)
 				if err != nil {
-					return errors.Wrap(err, "fetch dns records")
+					return errors.Wrap(err, "fetch worker routes")
 				}
 
 				for _, workerRoute := range workerRoutes {

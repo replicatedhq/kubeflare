@@ -10,7 +10,7 @@ For more information on this type, see the [Cloudflare documentation](https://ap
 
 ### Zone
 
-Each `kind: PageRule` must contain a `spec.zone` string attribute.
+Each `kind: WorkerRoute` must contain a `spec.zone` string attribute.
 The value of this attribute must match a [Zone](../zone) name managed by Kubeflare.
 The API token to call Cloudflare API will be read from the associated Zone resource.
 
