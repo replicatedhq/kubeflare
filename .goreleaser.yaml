@@ -39,5 +39,3 @@ dockers:
   - dockerfile: ./deploy/Dockerfile.manager
     image_templates:
       - "{{.Env.DOCKER_REPO}}:{{.Version}}"
-    binaries:
-      - manager
