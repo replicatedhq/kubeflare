@@ -38,6 +38,6 @@ archives:
 dockers:
   - dockerfile: ./deploy/Dockerfile.manager
     image_templates:
-      - "replicated/kubeflare-manager:{{.Version}}"
+      - "{{.Env.DOCKER_REPO}}:{{.Version}}"
     binaries:
       - manager
