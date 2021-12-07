@@ -1,7 +1,7 @@
 project_name: kubeflare
 release:
   github:
-    owner: replicatedhq
+    owner: hellofresh
     name: kubeflare
 builds:
   - id: kubeflare
@@ -23,4 +23,4 @@ builds:
 dockers:
   - dockerfile: ./deploy/Dockerfile.manager
     image_templates:
-      - "{{.Env.DOCKER_REPO}}:{{.Version}}"
+      - "hellofresh/kubeflare-manager:{{.Version}}"
