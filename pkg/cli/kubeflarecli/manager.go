@@ -78,7 +78,7 @@ func ManagerCmd() *cobra.Command {
 				}
 			}
 
-			if err := zonecontroller.Add(mgr); err != nil {
+			if err := zonecontroller.Add(mgr, protectAPIToken); err != nil {
 				logger.Error(err)
 				os.Exit(1)
 			}

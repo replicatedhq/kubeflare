@@ -46,7 +46,7 @@ func RunCmd() *cobra.Command {
 				return err
 			}
 
-			err = zone.ReconcileSettings(ctx, *instance, cf)
+			err = zone.ReconcileSettings(ctx, instance, cf)
 			if err != nil {
 				return err
 			}
