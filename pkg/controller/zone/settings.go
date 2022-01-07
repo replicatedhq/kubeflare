@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ReconcileSettings(ctx context.Context, instance crdsv1alpha1.Zone, cf *cloudflare.API) error {
+func ReconcileSettings(ctx context.Context, instance *crdsv1alpha1.Zone, cf *cloudflare.API) error {
 	logger.Debug("reconcileSettings for zone", zap.String("zoneName", instance.Name))
 
 	if instance.Spec.Settings == nil {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/replicatedhq/kubeflare/pkg/apis"
 	accessapplicationcontroller "github.com/replicatedhq/kubeflare/pkg/controller/accessapplication"
+	apitokencontroller "github.com/replicatedhq/kubeflare/pkg/controller/apitoken"
 	dnsrecordcontroller "github.com/replicatedhq/kubeflare/pkg/controller/dnsrecord"
 	pagerulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/pagerule"
 	wafrulecontroller "github.com/replicatedhq/kubeflare/pkg/controller/webapplicationfirewallrule"
@@ -67,7 +68,17 @@ func ManagerCmd() *cobra.Command {
 				os.Exit(1)
 			}
 
-			if err := zonecontroller.Add(mgr); err != nil {
+			protectAPIToken := v.GetBool("protect-apitoken")
+			if protectAPIToken {
+				err = apitokencontroller.Add(mgr)
+
+				if err != nil {
+					logger.Error(err)
+					os.Exit(1)
+				}
+			}
+
+			if err := zonecontroller.Add(mgr, protectAPIToken); err != nil {
 				logger.Error(err)
 				os.Exit(1)
 			}
@@ -115,6 +126,7 @@ func ManagerCmd() *cobra.Command {
 	cmd.Flags().String("metrics-addr", ":8088", "The address the metric endpoint binds to.")
 	cmd.Flags().Bool("leader-elect", true, "Enable leader election for controller manager. "+
 		"Enabling this will ensure there is only one active controller manager.")
+	cmd.Flags().Bool("protect-apitoken", false, "Protect APIToken from deletion if it is referenced by other managed resources.")
 
 	return cmd
 }
