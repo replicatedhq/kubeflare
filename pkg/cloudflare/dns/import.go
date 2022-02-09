@@ -1,6 +1,7 @@
 package dns
 
 import (
+	"context"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/pkg/errors"
 	"github.com/replicatedhq/kubeflare/pkg/apis/crds/v1alpha1"
@@ -13,13 +14,14 @@ func FetchDNSRecordsForZone(token string, zone string, zoneID string) ([]*v1alph
 		return nil, errors.Wrap(err, "create clouflare client")
 	}
 
-	resources, err := cf.DNSRecords(zoneID, cloudflare.DNSRecord{})
+	resources, err := cf.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{})
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch resources")
 	}
 
 	dnsRecords := []*v1alpha1.DNSRecord{}
 	for _, resource := range resources {
+		priority := int(*resource.Priority)
 		dnsRecord := v1alpha1.DNSRecord{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "crds.kubeflare.io/v1alpha1",
@@ -35,8 +37,8 @@ func FetchDNSRecordsForZone(token string, zone string, zoneID string) ([]*v1alph
 					Name:     resource.Name,
 					Content:  resource.Content,
 					TTL:      &resource.TTL,
-					Priority: &resource.Priority,
-					Proxied:  &resource.Proxied,
+					Priority: &priority,
+					Proxied:  resource.Proxied,
 				},
 			},
 		}

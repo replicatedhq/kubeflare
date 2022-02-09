@@ -1,6 +1,7 @@
 package workerroute
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -16,7 +17,7 @@ func FetchWorkerRoutesForZone(token string, zone string, zoneID string) ([]*v1al
 		return nil, errors.Wrap(err, "create clouflare client")
 	}
 
-	resources, err := cf.ListWorkerRoutes(zoneID)
+	resources, err := cf.ListWorkerRoutes(context.Background(), zoneID)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch resources")
 	}

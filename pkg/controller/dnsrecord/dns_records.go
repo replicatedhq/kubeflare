@@ -17,7 +17,7 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	existingRecords, err := cf.DNSRecords(zoneID, cloudflare.DNSRecord{})
+	existingRecords, err := cf.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{})
 	if err != nil {
 		return errors.Wrap(err, "failed to list dns records")
 	}
@@ -54,15 +54,16 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 					existingRecord.TTL = desiredTTL
 				}
 				if desiredRecord.Priority != nil {
-					if *desiredRecord.Priority != existingRecord.Priority {
+					if *desiredRecord.Priority != int(*existingRecord.Priority) {
 						isChanged = true
-						existingRecord.Priority = *desiredRecord.Priority
+						priority := uint16(*desiredRecord.Priority)
+						existingRecord.Priority = &priority
 					}
 				}
 				if desiredRecord.Proxied != nil {
-					if *desiredRecord.Proxied != existingRecord.Proxied {
+					if *desiredRecord.Proxied != *existingRecord.Proxied {
 						isChanged = true
-						existingRecord.Proxied = *desiredRecord.Proxied
+						existingRecord.Proxied = desiredRecord.Proxied
 					}
 				}
 
@@ -99,17 +100,18 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 			}
 
 			if desiredRecord.Priority != nil {
-				recordToCreate.Priority = *desiredRecord.Priority
+				priority := uint16(*desiredRecord.Priority)
+				recordToCreate.Priority = &priority
 			}
 			if desiredRecord.Proxied != nil {
-				recordToCreate.Proxied = *desiredRecord.Proxied
+				recordToCreate.Proxied = desiredRecord.Proxied
 			}
 			recordsToCreate = append(recordsToCreate, recordToCreate)
 		}
 	}
 
 	for _, recordToCreate := range recordsToCreate {
-		response, err := cf.CreateDNSRecord(zoneID, recordToCreate)
+		response, err := cf.CreateDNSRecord(ctx, zoneID, recordToCreate)
 		if err != nil {
 			return errors.Wrap(err, "failed to create dns record")
 		}
@@ -128,7 +130,7 @@ func ReconcileDNSRecordInstances(ctx context.Context, instance crdsv1alpha1.DNSR
 			Proxied: recordToUpdate.Proxied,
 		}
 
-		err := cf.UpdateDNSRecord(zoneID, recordToUpdate.ID, rr)
+		err := cf.UpdateDNSRecord(ctx, zoneID, recordToUpdate.ID, rr)
 		if err != nil {
 			return errors.Wrap(err, "failed to update dns record")
 		}

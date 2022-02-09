@@ -155,7 +155,7 @@ func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Contex
 
 	if instance.Status.ID == "" {
 		if importedID, ok := instance.Annotations[internal.ImportedIDAnnotation]; ok {
-			if _, err := getWorkerRoute(cf, zoneID, importedID); err == nil {
+			if _, err := cf.GetWorkerRoute(ctx, zoneID, importedID); err == nil {
 				instance.Status.ID = importedID
 				if err := r.Status().Update(ctx, instance); err != nil {
 					return errors.Wrap(err, "failed to update status")
@@ -174,7 +174,7 @@ func (r *WorkerRouteReconciler) ReconcileWorkerRouteInstances(ctx context.Contex
 func (r *WorkerRouteReconciler) createWorkerRoute(ctx context.Context, instance *crdsv1alpha1.WorkerRoute, zoneID string, cf *cloudflare.API) error {
 	route := mapCRDToCF(instance)
 
-	created, err := cf.CreateWorkerRoute(zoneID, route)
+	created, err := cf.CreateWorkerRoute(ctx, zoneID, route)
 	if err != nil {
 		if err := r.updateStatusLastError(ctx, instance, err); err != nil {
 			return errors.Wrap(err, "failed to update status")
@@ -193,7 +193,7 @@ func (r *WorkerRouteReconciler) createWorkerRoute(ctx context.Context, instance 
 }
 
 func (r *WorkerRouteReconciler) updateWorkerRoute(ctx context.Context, instance *crdsv1alpha1.WorkerRoute, zoneID string, cf *cloudflare.API) error {
-	routeCF, err := getWorkerRoute(cf, zoneID, instance.Status.ID)
+	routeCF, err := cf.GetWorkerRoute(ctx, zoneID, instance.Status.ID)
 	if err != nil {
 		if err := r.updateStatusLastError(ctx, instance, err); err != nil {
 			return errors.Wrap(err, "failed to update status")
@@ -202,12 +202,12 @@ func (r *WorkerRouteReconciler) updateWorkerRoute(ctx context.Context, instance 
 	}
 
 	route := mapCRDToCF(instance)
-	if equals(routeCF, route) {
+	if equals(routeCF.WorkerRoute, route) {
 		logger.Debug("worker route is in sync", zap.String("name", instance.Name))
 		return nil
 	}
 
-	updated, err := cf.UpdateWorkerRoute(zoneID, instance.Status.ID, route)
+	updated, err := cf.UpdateWorkerRoute(ctx, zoneID, instance.Status.ID, route)
 	if err != nil {
 		if err := r.updateStatusLastError(ctx, instance, err); err != nil {
 			return errors.Wrap(err, "failed to update status")
@@ -227,7 +227,7 @@ func (r *WorkerRouteReconciler) deleteWorkerRoute(ctx context.Context, instance 
 	if instance.Status.ID == "" {
 		return nil
 	}
-	deleted, err := cf.DeleteWorkerRoute(zoneID, instance.Status.ID)
+	deleted, err := cf.DeleteWorkerRoute(ctx, zoneID, instance.Status.ID)
 	if err != nil {
 		if strings.Contains(err.Error(), "workers.api.error.route_not_found") {
 			logger.Debug("worker route was already deleted", zap.String("id", deleted.ID), zap.String("zone", instance.Spec.Zone), zap.String("pattern", instance.Spec.Pattern))
@@ -270,20 +270,6 @@ func ignoreUnrecoverableErrors(err error) error {
 		return nil
 	}
 	return err
-}
-
-// TODO: replace with cloudflare.GetWorkerRoute() when it is implemented in the upstream
-func getWorkerRoute(cf *cloudflare.API, zoneID, ID string) (cloudflare.WorkerRoute, error) {
-	workerRoutes, err := cf.ListWorkerRoutes(zoneID)
-	if err != nil {
-		return cloudflare.WorkerRoute{}, errors.Wrap(err, "failed to list worker routes")
-	}
-	for _, wr := range workerRoutes.Routes {
-		if wr.ID == ID {
-			return wr, nil
-		}
-	}
-	return cloudflare.WorkerRoute{}, errors.Errorf("worker route not found: %s", ID)
 }
 
 func equals(w1, w2 cloudflare.WorkerRoute) bool {

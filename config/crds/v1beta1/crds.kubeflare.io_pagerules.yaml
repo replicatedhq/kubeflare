@@ -65,10 +65,24 @@ spec:
                   - redirectUrl
                   - statusCode
                   type: object
+                hostHeaderOverride:
+                  properties:
+                    value:
+                      type: string
+                  required:
+                  - value
+                  type: object
                 priority:
                   type: integer
                 requestUrl:
                   type: string
+                resolveOverride:
+                  properties:
+                    value:
+                      type: string
+                  required:
+                  - value
+                  type: object
               required:
               - requestUrl
               type: object

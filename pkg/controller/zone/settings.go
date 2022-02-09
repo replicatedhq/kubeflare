@@ -24,7 +24,7 @@ func ReconcileSettings(ctx context.Context, instance *crdsv1alpha1.Zone, cf *clo
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	zoneSettingsResponse, err := cf.ZoneSettings(zoneID)
+	zoneSettingsResponse, err := cf.ZoneSettings(ctx, zoneID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get zone settings")
 	}
@@ -266,7 +266,7 @@ func ReconcileSettings(ctx context.Context, instance *crdsv1alpha1.Zone, cf *clo
 		zap.String("zoneName", instance.Name),
 		zap.Any("updatedSettings", updatedZoneSettings))
 
-	updateResponse, err := cf.UpdateZoneSettings(zoneID, updatedZoneSettings)
+	updateResponse, err := cf.UpdateZoneSettings(ctx, zoneID, updatedZoneSettings)
 	if err != nil {
 		return errors.Wrap(err, "failed to update zone settings")
 	}
