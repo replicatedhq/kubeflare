@@ -17,14 +17,14 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 		return errors.Wrap(err, "failed to get zone id")
 	}
 
-	existingPackages, err := cf.ListWAFPackages(zoneID)
+	existingPackages, err := cf.ListWAFPackages(ctx, zoneID)
 	if err != nil {
 		return errors.Wrap(err, "failed to list WAF packages")
 	}
 
 	existingRules := []cloudflare.WAFRule{}
 	for _, currentPackage := range existingPackages {
-		rules, err := cf.ListWAFRules(zoneID, currentPackage.ID)
+		rules, err := cf.ListWAFRules(ctx, zoneID, currentPackage.ID)
 		if err != nil {
 			return errors.Wrap(err, "failed to list WAF rules")
 		}
@@ -64,7 +64,7 @@ func ReconcileWAFRuleInstances(ctx context.Context, instance crdsv1alpha1.WebApp
 	}
 
 	for _, ruleToUpdate := range rulesToUpdate {
-		_, err := cf.UpdateWAFRule(zoneID, ruleToUpdate.PackageID, ruleToUpdate.ID, ruleToUpdate.Mode)
+		_, err := cf.UpdateWAFRule(ctx, zoneID, ruleToUpdate.PackageID, ruleToUpdate.ID, ruleToUpdate.Mode)
 		if err != nil {
 			return errors.Wrap(err, "failed to update WAF rule")
 		}

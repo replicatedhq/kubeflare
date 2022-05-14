@@ -136,19 +136,19 @@ func ReconcileAccessApplicationInstance(ctx context.Context, instance crdsv1alph
 		}
 
 		for _, ap := range toCreate {
-			_, err := cf.CreateAccessPolicy(cf.AccountID, existingApplication.ID, ap)
+			_, err := cf.CreateAccessPolicy(ctx, cf.AccountID, existingApplication.ID, ap)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to create access policy")
 			}
 		}
 		for _, ap := range toUpdate {
-			_, err := cf.UpdateAccessPolicy(cf.AccountID, existingApplication.ID, ap)
+			_, err := cf.UpdateAccessPolicy(ctx, cf.AccountID, existingApplication.ID, ap)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to update access policy")
 			}
 		}
 		for _, ap := range toDelete {
-			err := cf.DeleteAccessPolicy(cf.AccountID, existingApplication.ID, ap.ID)
+			err := cf.DeleteAccessPolicy(ctx, cf.AccountID, existingApplication.ID, ap.ID)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to delete access policy")
 			}
@@ -161,7 +161,7 @@ func ReconcileAccessApplicationInstance(ctx context.Context, instance crdsv1alph
 // getExistingAccessApplicationFromID will look at the status subresource and if there's an ID
 // will get that. if not, it will a
 func getExistingAccessApplicationFromID(instance crdsv1alpha1.AccessApplication, zone *crdsv1alpha1.Zone, cf *cloudflare.API) (*cloudflare.AccessApplication, error) {
-	accessApplication, err := cf.AccessApplication(cf.AccountID, instance.Status.ApplicationID)
+	accessApplication, err := cf.AccessApplication(context.Background(), cf.AccountID, instance.Status.ApplicationID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get accessapplication from cf")
 	}
@@ -176,7 +176,7 @@ func findExistingAccessApplication(instance crdsv1alpha1.AccessApplication, zone
 	}
 
 	for {
-		accessApplications, resultInfo, err := cf.AccessApplications(cf.AccountID, currentPage)
+		accessApplications, resultInfo, err := cf.AccessApplications(context.Background(), cf.AccountID, currentPage)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get page of accessapplications")
 		}
@@ -196,7 +196,7 @@ func findExistingAccessApplication(instance crdsv1alpha1.AccessApplication, zone
 }
 
 func createAccessApplication(cf *cloudflare.API, application *cloudflare.AccessApplication) error {
-	createdApplication, err := cf.CreateAccessApplication(cf.AccountID, *application)
+	createdApplication, err := cf.CreateAccessApplication(context.Background(), cf.AccountID, *application)
 	if err != nil {
 		return errors.Wrap(err, "failed to create access application")
 	}
@@ -206,7 +206,7 @@ func createAccessApplication(cf *cloudflare.API, application *cloudflare.AccessA
 }
 
 func updateAccessApplication(cf *cloudflare.API, application *cloudflare.AccessApplication) error {
-	updatedApplication, err := cf.UpdateAccessApplication(cf.AccountID, *application)
+	updatedApplication, err := cf.UpdateAccessApplication(context.Background(), cf.AccountID, *application)
 	if err != nil {
 		return errors.Wrap(err, "failed to update access application")
 	}

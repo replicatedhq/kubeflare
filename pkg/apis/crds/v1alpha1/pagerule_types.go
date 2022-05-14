@@ -33,13 +33,18 @@ type ForwardingURLPageRule struct {
 	StatusCode  int    `json:"statusCode"`
 	RedirectURL string `json:"redirectUrl"`
 }
+type OverrideUrlPageRule struct {
+	Value string `json:"value"`
+}
 
 type Rule struct {
 	RequestURL string `json:"requestUrl"`
 
-	ForwardingURL  *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
-	AlwaysUseHTTPS *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
-	AutoMinify     *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
+	ForwardingURL      *ForwardingURLPageRule  `json:"forwardingUrl,omitempty"`
+	AlwaysUseHTTPS     *AlwaysUseHTTPSPageRule `json:"alwaysUseHttps,omitempty"`
+	ResolveOverride    *OverrideUrlPageRule    `json:"resolveOverride,omitempty"`
+	HostHeaderOverride *OverrideUrlPageRule    `json:"hostHeaderOverride,omitempty"`
+	AutoMinify         *AutoMinifyPageRule     `json:"autoMinify,omitempty"`
 
 	Priority *int `json:"priority,omitempty"`
 	Enabled  bool `json:"enabled,omitempty"`

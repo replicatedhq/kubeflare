@@ -9,6 +9,7 @@ import (
 	"github.com/replicatedhq/kubeflare/pkg/internal"
 	"github.com/replicatedhq/kubeflare/pkg/logger"
 	"go.uber.org/zap"
+	"log"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"strings"
@@ -81,8 +82,9 @@ func (r *ReconcilePageRule) ReconcilePageRules(ctx context.Context, instance crd
 
 func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance *crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
 	pageRule := r.mapCRDToCF(instance)
-	created, err := cf.CreatePageRule(zoneID, pageRule)
+	created, err := cf.CreatePageRule(ctx, zoneID, pageRule)
 	if err != nil {
+		log.Printf("%v", pageRule)
 		return errors.Wrap(err, "failed to create page rule")
 	}
 
@@ -104,7 +106,7 @@ func (r *ReconcilePageRule) createPageRule(ctx context.Context, instance *crdsv1
 }
 
 func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
-	ruleCF, err := cf.PageRule(zoneID, instance.Status.ID)
+	ruleCF, err := cf.PageRule(context.Background(), zoneID, instance.Status.ID)
 	if err != nil {
 		return errors.Wrap(err, "could not retrieve page rule")
 	}
@@ -118,7 +120,7 @@ func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1al
 		return nil
 	}
 
-	if err = cf.UpdatePageRule(zoneID, ruleK8s.ID, ruleK8s); err != nil {
+	if err = cf.UpdatePageRule(context.Background(), zoneID, ruleK8s.ID, ruleK8s); err != nil {
 		return errors.Wrap(err, "could not update page rule")
 	}
 
@@ -134,7 +136,7 @@ func (r *ReconcilePageRule) syncPageRule(ctx context.Context, instance *crdsv1al
 }
 
 func (r *ReconcilePageRule) deletePageRule(instance *crdsv1alpha1.PageRule, zoneID string, cf *cloudflare.API) error {
-	err := cf.DeletePageRule(zoneID, instance.Status.ID)
+	err := cf.DeletePageRule(context.Background(), zoneID, instance.Status.ID)
 	if err == nil {
 		return nil
 	}
@@ -165,7 +167,7 @@ func (r *ReconcilePageRule) finalize(ctx context.Context, instance *crdsv1alpha1
 }
 
 func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudflare.PageRule {
-	rule := cloudflare.PageRule{ID: instance.Status.ID}
+	rule := cloudflare.PageRule{ID: instance.Status.ID, Actions: []cloudflare.PageRuleAction{}}
 
 	if instance.Spec.Rule.Enabled {
 		rule.Status = "active"
@@ -189,25 +191,34 @@ func (r *ReconcilePageRule) mapCRDToCF(instance *crdsv1alpha1.PageRule) cloudfla
 			},
 		},
 	}
-
 	if instance.Spec.Rule.ForwardingURL != nil {
-		rule.Actions = []cloudflare.PageRuleAction{
-			{
-				ID: "forwarding_url",
-				Value: map[string]interface{}{
-					"url":         instance.Spec.Rule.ForwardingURL.RedirectURL,
-					"status_code": instance.Spec.Rule.ForwardingURL.StatusCode,
-				},
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID: "forwarding_url",
+			Value: map[string]interface{}{
+				"url":         instance.Spec.Rule.ForwardingURL.RedirectURL,
+				"status_code": instance.Spec.Rule.ForwardingURL.StatusCode,
 			},
-		}
+		})
+	}
+
+	if instance.Spec.Rule.ResolveOverride != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "resolve_override",
+			Value: instance.Spec.Rule.ResolveOverride.Value,
+		})
+	}
+
+	if instance.Spec.Rule.HostHeaderOverride != nil {
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID:    "host_header_override",
+			Value: instance.Spec.Rule.HostHeaderOverride.Value,
+		})
 	}
 
 	if instance.Spec.Rule.AlwaysUseHTTPS != nil {
-		rule.Actions = []cloudflare.PageRuleAction{
-			{
-				ID: "always_use_https",
-			},
-		}
+		rule.Actions = append(rule.Actions, cloudflare.PageRuleAction{
+			ID: "always_use_https",
+		})
 	}
 
 	return rule
