@@ -66,6 +66,14 @@ bin/kubeflare:
 		-o bin/kubeflare \
 		./cmd/kubeflare
 
+.PHONY: bin/kubeflare-arm64
+bin/kubeflare-arm64:
+	env GOOS=linux GOARCH=arm64 go build \
+		${LDFLAGS} \
+		-i \
+		-o bin/kubeflare \
+		./cmd/kubeflare
+
 .PHONY: run
 run: generate fmt vet bin/kubeflare
 	./bin/kubeflare run \
